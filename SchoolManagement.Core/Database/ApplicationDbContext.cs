@@ -3,10 +3,6 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SchoolManagement.Core.Entities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolManagement.Core.Database
 {
@@ -60,6 +56,11 @@ namespace SchoolManagement.Core.Database
                     .WithMany(c => c!.Courses)
                     .HasForeignKey(t => t!.TeacherId)
                     .OnDelete(DeleteBehavior.Restrict);
+
+                entity.Property(e => e.Day)
+                    .HasConversion(
+                        v => v.ToString(),
+                        v => (DayOfWeek)Enum.Parse(typeof(DayOfWeek), v));
             });
         }
     }
