@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace SchoolManagement.Api.DataObjects
 {
     public class CourseDTO
     {
+        [FromRoute]
         public int Id { get; set; }
         public string? TeacherId { get; set; }
         public string Name { get; set; } = string.Empty;

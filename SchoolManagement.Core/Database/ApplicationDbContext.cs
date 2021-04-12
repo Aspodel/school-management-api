@@ -26,10 +26,16 @@ namespace SchoolManagement.Core.Database
             builder.Entity<User>(entity =>
             {
                 entity.HasIndex(e => e.IdCard).IsUnique();
+
                 entity.HasOne(d => d.Department)
                     .WithMany(u => u!.Users)
                     .HasForeignKey(d => d!.DepartmentId)
                     .OnDelete(DeleteBehavior.Restrict);
+
+                entity.Property(e => e.Gender)
+                    .HasConversion(
+                        v => v == true ? "MALE" : v == false ? "FEMALE" : null,
+                        v => v.ToUpper() == "MALE" ? true : false);
             });
 
             builder.Entity<UserRole>(entity =>

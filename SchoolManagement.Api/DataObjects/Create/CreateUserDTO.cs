@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace SchoolManagement.Api.DataObjects.Create
 {
     public class CreateUserDTO
     {
-        [Required]
         public string UserName { get; set; }
 
         [Required]
@@ -26,7 +26,7 @@ namespace SchoolManagement.Api.DataObjects.Create
         public string Address { get; set; }
 
         [Required]
-        public string Role { get; set; }
+        public IList<string> Roles { get; set; } = Array.Empty<string>();
 
         public int DepartmentId { get; set; }
     }

@@ -34,7 +34,10 @@ namespace SchoolManagement.Api
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
+            services.AddControllers()
+                    .AddNewtonsoftJson(options =>
+                        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "SchoolManagement.Api", Version = "v1" });
@@ -71,17 +74,18 @@ namespace SchoolManagement.Api
                                                             options.UseSqlServer
                                                            (Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<User, IdentityRole>(options => {
+            services.AddIdentity<User, Role>(options => {
                 options.Password.RequireDigit = false;
                 options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequiredLength = 6;
 
-                //options.User.RequireUniqueEmail = true;
+                options.User.RequireUniqueEmail = true;
                 //options.SignIn.RequireConfirmedEmail = true;
             })
                     .AddEntityFrameworkStores<ApplicationDbContext>()
+                    .AddUserManager<UserManager>()
                     .AddDefaultTokenProviders();
 
             services.Configure<JwTokenConfig>(Configuration.GetSection("JwTokenConfig"));

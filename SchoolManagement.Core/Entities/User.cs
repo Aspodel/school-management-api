@@ -11,6 +11,7 @@ namespace SchoolManagement.Core.Entities
         public bool? Gender { get; set; }
         public DateTime Birthdate { get; set; }
         public string Address { get; set; } = string.Empty;
+        public bool IsDelete { get; set; } = false;
 
         public int DepartmentId { get; set; }
         public Department? Department { get; set; }

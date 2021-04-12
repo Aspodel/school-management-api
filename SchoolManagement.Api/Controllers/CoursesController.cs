@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SchoolManagement.Api.DataObjects;
 using SchoolManagement.Api.DataObjects.Create;
 using SchoolManagement.Api.DataObjects.Get;
 using SchoolManagement.Contracts;
 using SchoolManagement.Core.Entities;
+using System.Collections;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,6 +26,13 @@ namespace SchoolManagement.Api.Controllers
             _courseRepository = courseRepository;
             _departmentRepository = departmentRepository;
             _mapper = mapper;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken = default)
+        {
+            var courses = await _courseRepository.FindAll().ToListAsync();
+            return Ok(_mapper.Map<IEnumerable<GetCourseDTO>>(courses));
         }
 
         [HttpGet("{id}")]
@@ -47,7 +57,7 @@ namespace SchoolManagement.Api.Controllers
             return Ok();
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(CourseDTO dTO, CancellationToken cancellationToken = default)
         {
             var course = await _courseRepository.FindByIdAsync(dTO.Id, cancellationToken);

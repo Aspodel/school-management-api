@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SchoolManagement.Core.Migrations
 {
-    public partial class version_100 : Migration
+    public partial class first : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -61,11 +61,12 @@ namespace SchoolManagement.Core.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Gender = table.Column<bool>(type: "bit", nullable: true),
+                    IdCard = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Birthdate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IdCard = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: false),
                     DepartmentId = table.Column<int>(type: "int", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -219,16 +220,16 @@ namespace SchoolManagement.Core.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DepartmentId = table.Column<int>(type: "int", nullable: false),
                     TeacherId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Credits = table.Column<int>(type: "int", nullable: false),
                     Slot = table.Column<int>(type: "int", nullable: true),
                     RestSlot = table.Column<int>(type: "int", nullable: true),
-                    Day = table.Column<int>(type: "int", nullable: true),
+                    Day = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     StartPeriods = table.Column<int>(type: "int", nullable: true),
                     Periods = table.Column<int>(type: "int", nullable: true),
-                    Room = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Room = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DepartmentId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
