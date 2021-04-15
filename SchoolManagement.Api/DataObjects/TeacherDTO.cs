@@ -4,13 +4,11 @@ using SchoolManagement.Core.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SchoolManagement.Api.DataObjects
 {
-    [ModelBinder(typeof(MultipleSourcesModelBinder<StudentDTO>))]
-    public class StudentDTO
+    [ModelBinder(typeof(MultipleSourcesModelBinder<TeacherDTO>))]
+    public class TeacherDTO
     {
         [FromRoute]
         public string IdCard { get; set; } = string.Empty;
@@ -21,8 +19,6 @@ namespace SchoolManagement.Api.DataObjects
         public string FullName { get; set; } = string.Empty;
 
         public bool? Gender { get; set; }
-
-        [Required]
         public DateTime Birthdate { get; set; }
 
         [EmailAddress]
@@ -32,8 +28,8 @@ namespace SchoolManagement.Api.DataObjects
         public string? PhoneNumber { get; set; }
 
         public string? Address { get; set; }
+        public bool? IsHead { get; set; }
 
-        //public ICollection<string> Roles { get; set; } = Array.Empty<string>();
         public ICollection<Class> Classes { get; set; } = Array.Empty<Class>();
     }
 }

@@ -18,7 +18,8 @@ namespace SchoolManagement.Repository
         public override IQueryable<Department> FindAll(Expression<Func<Department, bool>>? predicate = null)
             => _dbSet
                 .WhereIf(predicate != null, predicate!)
-                .Include(d => d.Users);
+                .Include(d => d.Teachers)
+                .Include(d=>d.Students);
 
         public override async Task<Department?> FindByIdAsync(int id, CancellationToken cancellationToken = default)
             => await FindAll(d => d.Id == id)

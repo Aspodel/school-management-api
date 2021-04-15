@@ -28,11 +28,6 @@ namespace SchoolManagement.Core.Database
             {
                 entity.HasIndex(e => e.IdCard).IsUnique();
 
-                entity.HasOne(d => d.Department)
-                    .WithMany(u => u!.Users)
-                    .HasForeignKey(d => d!.DepartmentId)
-                    .OnDelete(DeleteBehavior.Restrict);
-
                 entity.Property(e => e.Gender)
                     .HasConversion(converter);
             });
@@ -49,7 +44,6 @@ namespace SchoolManagement.Core.Database
             //    entity.HasOne(sc => sc.Course).WithMany(s => s!.StudentCourses).HasForeignKey(sc => sc.CourseId).OnDelete(DeleteBehavior.Cascade);
             //    entity.HasOne(sc => sc.Student).WithMany(c => c!.EnrolledCourses).HasForeignKey(sc => sc.StudentId).OnDelete(DeleteBehavior.Cascade);
             //});
-
 
             builder.Entity<Class>(entity =>
             {
@@ -68,7 +62,7 @@ namespace SchoolManagement.Core.Database
                 entity.Property(e => e.Day)
                     .HasConversion(
                         v => v.ToString(),
-                        v => (DayOfWeek)Enum.Parse(typeof(DayOfWeek), v));
+                        v => (DayOfWeek)Enum.Parse(typeof(DayOfWeek), v!));
             });
 
             builder.Entity<Course>(entity =>
@@ -76,7 +70,7 @@ namespace SchoolManagement.Core.Database
                 entity.HasIndex(e => e.CourseCode).IsUnique();
 
                 entity.HasOne(c => c.Department)
-                    .WithMany(d => d.Courses)
+                    .WithMany(d => d!.Courses)
                     .HasForeignKey(c => c.DepartmentId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
@@ -84,6 +78,22 @@ namespace SchoolManagement.Core.Database
             builder.Entity<Department>(entity =>
             {
                 entity.HasIndex(e => e.ShortName).IsUnique();
+            });
+
+            builder.Entity<Student>(entity =>
+            {
+                entity.HasOne(s => s.Department)
+                    .WithMany(d => d!.Students)
+                    .HasForeignKey(s => s!.DepartmentId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            builder.Entity<Teacher>(entity =>
+            {
+                entity.HasOne(t => t.Department)
+                    .WithMany(d => d!.Teachers)
+                    .HasForeignKey(t => t!.DepartmentId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }

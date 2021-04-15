@@ -1,20 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SchoolManagement.Api.Services;
-using SchoolManagement.Core.Entities;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace SchoolManagement.Api.DataObjects
+namespace SchoolManagement.Api.DataObjects.Create
 {
-    [ModelBinder(typeof(MultipleSourcesModelBinder<StudentDTO>))]
-    public class StudentDTO
+    [ModelBinder(typeof(MultipleSourcesModelBinder<CreateStudentDTO>))]
+    public class CreateStudentDTO
     {
-        [FromRoute]
-        public string IdCard { get; set; } = string.Empty;
-
+        [Required]
         public int DepartmentId { get; set; }
 
         [Required]
@@ -32,8 +26,5 @@ namespace SchoolManagement.Api.DataObjects
         public string? PhoneNumber { get; set; }
 
         public string? Address { get; set; }
-
-        //public ICollection<string> Roles { get; set; } = Array.Empty<string>();
-        public ICollection<Class> Classes { get; set; } = Array.Empty<Class>();
     }
 }

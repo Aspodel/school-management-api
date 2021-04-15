@@ -1,15 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using SchoolManagement.Api.Services;
+using System.ComponentModel.DataAnnotations;
 
 namespace SchoolManagement.Api.DataObjects
 {
-    public class RoleDTO
+    [ModelBinder(typeof(MultipleSourcesModelBinder<RoleDTO>))]
+    public class RoleDTO : BaseDTO<string>
     {
-        [FromRoute]
-        public string Id { get; set; }
+        [Required]
         public string Name { get; set; } = string.Empty;
     }
 }

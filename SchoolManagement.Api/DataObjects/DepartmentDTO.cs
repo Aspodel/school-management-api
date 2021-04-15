@@ -1,18 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SchoolManagement.Api.Services;
 using SchoolManagement.Core.Entities;
 using System;
 using System.Collections.Generic;
 
 namespace SchoolManagement.Api.DataObjects
 {
-    public class DepartmentDTO
+    [ModelBinder(typeof(MultipleSourcesModelBinder<DepartmentDTO>))]
+    public class DepartmentDTO : BaseDTO
     {
-        [FromRoute]
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string ShortName { get; set; }
-        public virtual ICollection<Course> Courses { get; set; } = Array.Empty<Course>();
-        public virtual ICollection<StudentDTO> Students { get; set; } = Array.Empty<StudentDTO>();
-        public virtual ICollection<Teacher> Teachers { get; set; } = Array.Empty<Teacher>();
+        public string Name { get; set; } = string.Empty;
+        public string ShortName { get; set; } = string.Empty;
+
+        public ICollection<Course> Courses { get; set; } = Array.Empty<Course>();
+        public ICollection<Student> Students { get; set; } = Array.Empty<Student>();
+        public ICollection<Teacher> Teachers { get; set; } = Array.Empty<Teacher>();
     }
 }

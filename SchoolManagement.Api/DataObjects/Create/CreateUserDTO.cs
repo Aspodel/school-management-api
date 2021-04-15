@@ -1,33 +1,31 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using SchoolManagement.Api.Services;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace SchoolManagement.Api.DataObjects.Create
 {
+    [ModelBinder(typeof(MultipleSourcesModelBinder<CreateUserDTO>))]
     public class CreateUserDTO
     {
-        public string UserName { get; set; }
+        [Required]
+        public string UserName { get; set; } = string.Empty;
 
         [Required]
-        public string Password { get; set; }
+        public string Password { get; set; } = string.Empty;
 
         [Required]
-        public string FullName { get; set; }
+        public string FullName { get; set; } = string.Empty;
 
+        [Required]
         [EmailAddress]
-        public string Email { get; set; }
-
-        public bool Gender { get; set; }
-
-        public DateTime BirthDate { get; set; }
-
-        public string PhoneNumber { get; set; }
-
-        public string Address { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         [Required]
-        public IList<string> Roles { get; set; } = Array.Empty<string>();
+        [Phone]
+        public string PhoneNumber { get; set; } = string.Empty;
 
-        public int DepartmentId { get; set; }
+        public IList<string> Roles { get; set; } = Array.Empty<string>();
     }
 }

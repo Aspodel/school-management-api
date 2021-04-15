@@ -45,13 +45,8 @@ namespace SchoolManagement.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateUser(CreateUserDTO dTO, CancellationToken cancellationToken = default)
         {
-            var department = await _departmentRepository.FindByIdAsync(dTO.DepartmentId, cancellationToken);
-
             var user = _mapper.Map<User>(dTO);
-            user.Department = department;
-
-            var id = GenerateId(department.Users.LastOrDefault()?.IdCard);
-            user.IdCard = string.Format("{0}{1}IU{2}", department.ShortName, department.ShortName, id);
+            user.IdCard = await GenerateIdCard();
             user.UserName = user.IdCard;
 
             var result = await _userManager.CreateAsync(user, dTO.Password);
@@ -63,21 +58,25 @@ namespace SchoolManagement.Api.Controllers
             return Ok(user);
         }
 
-        private int GenerateId(string prevId)
+        private async Task<string> GenerateIdCard()
         {
-            if (prevId is null)
-                return 1;
-
-            prevId = prevId.Remove(0, 6);
-            int newId = int.Parse(prevId) + 1;
-            return newId;
+            var users = await _userManager.FindAll().ToListAsync();
+            var prevId = users.Max(u => u.IdCard);
+            if (!string.IsNullOrEmpty(prevId))
+            {
+                prevId = prevId.Remove(0, 2);
+                var newId = (int.Parse(prevId) + 1).ToString("D3");
+                return string.Format("IU{0}", newId);
+            }
+            else
+                return string.Format("IU001");
         }
 
         [HttpPut("{idCard}")]
         public async Task<IActionResult> UpdateUser(UserDTO dTO)
         {
             var user = await _userManager.FindByIdCardAsync(dTO.IdCard);
-            if (user is null || user.IsDelete)
+            if (user is null || user.IsDeleted)
                 return NotFound();
 
             _mapper.Map(dTO, user);
@@ -90,7 +89,7 @@ namespace SchoolManagement.Api.Controllers
         public async Task<IActionResult> Delete(string idCard)
         {
             var user = await _userManager.FindByIdCardAsync(idCard);
-            user.IsDelete = true;
+            user.IsDeleted = true;
             await _userManager.UpdateAsync(user);
             return NoContent();
         }

@@ -1,18 +1,19 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using SchoolManagement.Api.Services;
+using System.ComponentModel.DataAnnotations;
 
 namespace SchoolManagement.Api.DataObjects.Create
 {
+    [ModelBinder(typeof(MultipleSourcesModelBinder<CreateCourseDTO>))]
     public class CreateCourseDTO
     {
+        [Required]
         public int DepartmentId { get; set; }
-        public string TeacherId { get; set; }
+
+        [Required]
         public string Name { get; set; } = string.Empty;
+
+        [Required]
         public int Credits { get; set; }
-        public int? Slot { get; set; }
-        public int? RestSlot { get; set; }
-        public DayOfWeek? Day { get; set; }
-        public int? StartPeriods { get; set; }
-        public int? Periods { get; set; }
-        public string Room { get; set; } = string.Empty;
     }
 }

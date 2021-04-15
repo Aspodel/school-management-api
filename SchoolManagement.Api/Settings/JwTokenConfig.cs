@@ -2,6 +2,6 @@
 {
     public class JwTokenConfig
     {
-        public string JWT_Secret { get; set; }
+        public string JWT_Secret { get; set; } = string.Empty;
     }
 }

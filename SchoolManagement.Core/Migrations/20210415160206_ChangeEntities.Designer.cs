@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchoolManagement.Core.Database;
 
 namespace SchoolManagement.Core.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210415160206_ChangeEntities")]
+    partial class ChangeEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -138,10 +140,9 @@ namespace SchoolManagement.Core.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Day")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Periods")
+                    b.Property<int?>("Periods")
                         .HasColumnType("int");
 
                     b.Property<int?>("RestSlot")
@@ -154,7 +155,7 @@ namespace SchoolManagement.Core.Migrations
                     b.Property<int?>("Slot")
                         .HasColumnType("int");
 
-                    b.Property<int>("StartPeriods")
+                    b.Property<int?>("StartPeriods")
                         .HasColumnType("int");
 
                     b.Property<string>("TeacherId")
@@ -262,6 +263,7 @@ namespace SchoolManagement.Core.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Address")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Birthdate")

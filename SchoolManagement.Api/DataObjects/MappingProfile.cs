@@ -19,17 +19,7 @@ namespace SchoolManagement.Api.DataObjects
                 .ForMember(d => d.Roles, o => o.MapFrom(s => s.UserRoles.Select(ur => ur.Role!.Name))); 
             CreateMap<UserDTO, User>();
 
-            CreateMap<CreateUserDTO, User>();
-
-            //CreateMap<Student, StudentDTO>()
-            //    .ForMember(dest => dest.Department, opt => {
-            //        opt.PreCondition(src => src.UserRoles.Contains());
-            //        opt.MapFrom(src => {
-            //            src.Department.Name 
-            //        });
-            //    });
-            
-
+            CreateMap<CreateUserDTO, User>();            
             CreateMap<CreateUserDTO, Student>();
 
 

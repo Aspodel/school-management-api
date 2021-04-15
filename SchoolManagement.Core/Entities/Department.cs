@@ -9,6 +9,7 @@ namespace SchoolManagement.Core.Entities
         public string ShortName { get; set; } = string.Empty;
 
         public virtual ICollection<Course> Courses { get; set; } = new HashSet<Course>();
-        public virtual ICollection<User> Users { get; set; } = new HashSet<User>();
+        public virtual ICollection<Teacher> Teachers { get; set; } = new HashSet<Teacher>();
+        public virtual ICollection<Student> Students { get; set; } = new HashSet<Student>();
     }
 }

@@ -39,40 +39,42 @@ namespace SchoolManagement.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken = default)
         {
-            var students = await _studentRepository.FindAll().ToListAsync();
-            var result = await _context.Departments.Include(x=>x.Users).ToListAsync();
+            var students = await _studentRepository.FindAll().ToListAsync(cancellationToken);
+            //var result = await _context.Departments.Include(x=>x.Students).ToListAsync();
 
-            return Ok(result);
+            return Ok(students);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreateUserDTO dto, CancellationToken cancellationToken=default)
+        public async Task<IActionResult> Create(CreateStudentDTO dto, CancellationToken cancellationToken=default)
         {
-            var department = await _departmentRepository.FindByIdAsync(dto.DepartmentId);
+            var department = await _departmentRepository.FindByIdAsync(dto.DepartmentId, cancellationToken);
+            if (department is null)
+                return BadRequest("Department is not exist");
 
-            var user = _mapper.Map<Student>(dto);
-            user.Department = department;
-            user.IdCard = GenerateIdCard(department.Users.Max(d => d.IdCard), department.ShortName);
-            user.UserName = user.IdCard;
+            var student = _mapper.Map<Student>(dto);
+            student.Department = department;
+            student.IdCard = GenerateIdCard(department.Students.Max(d => d.IdCard)!, department.ShortName);
+            student.UserName = student.IdCard;
 
-            var result = await _userManager.CreateAsync(user, dto.Password);
+            var result = await _userManager.CreateAsync(student, "123123");
             if (!result.Succeeded)
             { 
                 return BadRequest(result);
             }
 
             // Add user to specified roles
-            var addtoRolesResullt = await _userManager.AddToRolesAsync(user, dto.Roles);
-            if (!addtoRolesResullt.Succeeded)
+            var addtoRoleResullt = await _userManager.AddToRoleAsync(user, "Student");
+            if (!addtoRoleResullt.Succeeded)
             {
                 return BadRequest("Fail to add role");
             }
 
-            await _studentRepository.SaveChangesAsync();
-            return Ok(user);
+            await _studentRepository.SaveChangesAsync(cancellationToken);
+            return Ok(student);
         }
 
-        private string GenerateIdCard(string prevId, string department)
+        private static string GenerateIdCard(string prevId, string department)
         {
             var academicYear = DateTime.Now.Year.ToString("yy");
             if (!string.IsNullOrEmpty(prevId))
