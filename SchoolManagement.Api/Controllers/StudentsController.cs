@@ -49,12 +49,10 @@ namespace SchoolManagement.Api.Controllers
         public async Task<IActionResult> Create(CreateUserDTO dto, CancellationToken cancellationToken=default)
         {
             var department = await _departmentRepository.FindByIdAsync(dto.DepartmentId);
-            //var test = department.Users.Max(d => d.IdCard);
+
             var user = _mapper.Map<Student>(dto);
             user.Department = department;
-
-            var id = GenerateId(department.Users.Max(d => d.IdCard)); 
-            user.IdCard = string.Format("{0}{1}IU{2}", department.ShortName, department.ShortName, id);
+            user.IdCard = GenerateIdCard(department.Users.Max(d => d.IdCard), department.ShortName);
             user.UserName = user.IdCard;
 
             var result = await _userManager.CreateAsync(user, dto.Password);
@@ -74,14 +72,17 @@ namespace SchoolManagement.Api.Controllers
             return Ok(user);
         }
 
-        private int GenerateId(string prevId)
+        private string GenerateIdCard(string prevId, string department)
         {
-            if (prevId is null)
-                return 1;
-
-            prevId = prevId.Remove(0, 6);
-            int newId = int.Parse(prevId) + 1;
-            return newId;
+            var academicYear = DateTime.Now.Year.ToString("yy");
+            if (!string.IsNullOrEmpty(prevId))
+            {
+                prevId = prevId.Remove(0, 8);
+                var newId = (int.Parse(prevId) + 1).ToString("D3");
+                return string.Format("{0}{0}IU{1}{2}", department, academicYear, newId);
+            }
+            else
+                return string.Format("{0}{0}IU{1}001", department, academicYear);
         }   
 
 

@@ -6,6 +6,6 @@ namespace SchoolManagement.Core.Entities
     {
         public bool? IsHead { get; set; } = false;
 
-        public virtual ICollection<Course> Courses { get; set; } = new HashSet<Course>();
+        public virtual ICollection<Class> Classes { get; set; } = new HashSet<Class>();
     }
 }

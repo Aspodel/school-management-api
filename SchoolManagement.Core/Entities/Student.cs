@@ -4,6 +4,6 @@ namespace SchoolManagement.Core.Entities
 {
     public class Student : User
     {
-        public virtual ICollection<StudentCourse> EnrolledCourses { get; set; } = new HashSet<StudentCourse>();
+        public virtual ICollection<Class> Classes { get; set; } = new HashSet<Class>();
     }
 }

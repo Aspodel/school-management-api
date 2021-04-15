@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchoolManagement.Core.Entities;
 using System;
 
@@ -12,13 +13,13 @@ namespace SchoolManagement.Core.Database
 
         public virtual DbSet<Course> Courses { get; set; } = null!;
         public virtual DbSet<Department> Departments { get; set; } = null!;
-        public virtual DbSet<Student> Students { get; set; } = null!;
-        public virtual DbSet<Teacher> Teachers { get; set; } = null!;
 
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            var converter = new BoolToStringConverter("Female", "Male");
 
             builder.Entity<Student>().ToTable("Students");
             builder.Entity<Teacher>().ToTable("Teachers");
@@ -33,9 +34,7 @@ namespace SchoolManagement.Core.Database
                     .OnDelete(DeleteBehavior.Restrict);
 
                 entity.Property(e => e.Gender)
-                    .HasConversion(
-                        v => v == true ? "MALE" : v == false ? "FEMALE" : null,
-                        v => v.ToUpper() == "MALE" ? true : false);
+                    .HasConversion(converter);
             });
 
             builder.Entity<UserRole>(entity =>
@@ -44,22 +43,25 @@ namespace SchoolManagement.Core.Database
                 entity.HasOne(ur => ur.User).WithMany(u => u!.UserRoles).HasForeignKey(ur => ur.UserId).IsRequired().OnDelete(DeleteBehavior.Cascade);
             });
 
-            builder.Entity<StudentCourse>(entity =>
-            {
-                entity.HasKey(sc => new { sc.CourseId });
-                entity.HasOne(sc => sc.Course).WithMany(s => s!.StudentCourses).HasForeignKey(sc => sc.CourseId).OnDelete(DeleteBehavior.Cascade);
-                entity.HasOne(sc => sc.Student).WithMany(c => c!.EnrolledCourses).HasForeignKey(sc => sc.StudentId).OnDelete(DeleteBehavior.Cascade);
-            });
+            //builder.Entity<StudentCourse>(entity =>
+            //{
+            //    entity.HasKey(sc => new { sc.CourseId });
+            //    entity.HasOne(sc => sc.Course).WithMany(s => s!.StudentCourses).HasForeignKey(sc => sc.CourseId).OnDelete(DeleteBehavior.Cascade);
+            //    entity.HasOne(sc => sc.Student).WithMany(c => c!.EnrolledCourses).HasForeignKey(sc => sc.StudentId).OnDelete(DeleteBehavior.Cascade);
+            //});
 
-            builder.Entity<Course>(entity =>
+
+            builder.Entity<Class>(entity =>
             {
-                entity.HasOne(d => d.Department)
-                    .WithMany(c => c!.Courses)
-                    .HasForeignKey(d => d!.DepartmentId)
+                entity.HasIndex(e => e.ClassCode).IsUnique();
+
+                entity.HasOne(d => d.Course)
+                    .WithMany(c => c!.Classes)
+                    .HasForeignKey(d => d!.CourseId)
                     .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(t => t.Teacher)
-                    .WithMany(c => c!.Courses)
+                    .WithMany(c => c!.Classes)
                     .HasForeignKey(t => t!.TeacherId)
                     .OnDelete(DeleteBehavior.Restrict);
 
@@ -67,6 +69,21 @@ namespace SchoolManagement.Core.Database
                     .HasConversion(
                         v => v.ToString(),
                         v => (DayOfWeek)Enum.Parse(typeof(DayOfWeek), v));
+            });
+
+            builder.Entity<Course>(entity =>
+            {
+                entity.HasIndex(e => e.CourseCode).IsUnique();
+
+                entity.HasOne(c => c.Department)
+                    .WithMany(d => d.Courses)
+                    .HasForeignKey(c => c.DepartmentId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            builder.Entity<Department>(entity =>
+            {
+                entity.HasIndex(e => e.ShortName).IsUnique();
             });
         }
     }
