@@ -5,6 +5,8 @@ using SchoolManagement.Core.Entities;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SchoolManagement.Repository
 {
@@ -15,5 +17,9 @@ namespace SchoolManagement.Repository
         public override IQueryable<Student> FindAll(Expression<Func<Student, bool>>? predicate = null)
             => _dbSet
                 .Include(s => s.Department);
+
+        public virtual async Task<Student?> FindByIdAsync(string idCard, CancellationToken cancellationToken = default)
+            => await FindAll(s => s.IdCard == idCard)
+                .FirstOrDefaultAsync();
     }
 }

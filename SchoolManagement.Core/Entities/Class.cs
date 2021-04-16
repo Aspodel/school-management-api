@@ -8,7 +8,7 @@ namespace SchoolManagement.Core.Entities
         public int Id { get; set; }
         public string ClassCode { get; set; } = null!;
         public int CourseId { get; set; }
-        public string? TeacherId { get; set; }
+        public string TeacherId { get; set; } = string.Empty;
         public string Room { get; set; } = string.Empty;
         public DayOfWeek Day { get; set; }
         public int StartPeriods { get; set; }

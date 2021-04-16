@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SchoolManagement.Api.DataObjects;
 using SchoolManagement.Api.DataObjects.Create;
 using SchoolManagement.Contracts;
 using SchoolManagement.Core.Database;
@@ -21,15 +22,13 @@ namespace SchoolManagement.Api.Controllers
     [ApiController]
     public class StudentsController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
         private readonly UserManager _userManager;
         private readonly IStudentRepository _studentRepository;
         private readonly IMapper _mapper;
         private readonly IDepartmentRepository _departmentRepository;
 
-        public StudentsController(ApplicationDbContext context, UserManager userManager ,IStudentRepository studentRepository, IMapper mapper, IDepartmentRepository departmentRepository)
+        public StudentsController(UserManager userManager ,IStudentRepository studentRepository, IMapper mapper, IDepartmentRepository departmentRepository)
         {
-            _context = context;
             _userManager = userManager;
             _studentRepository = studentRepository;
             _mapper = mapper;
@@ -39,14 +38,22 @@ namespace SchoolManagement.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken = default)
         {
-            var students = await _studentRepository.FindAll().ToListAsync(cancellationToken);
-            //var result = await _context.Departments.Include(x=>x.Students).ToListAsync();
+            var students = await _userManager.FindAllStudent().ToListAsync(cancellationToken);
+            return Ok(_mapper.Map<IEnumerable<StudentDTO>>(students));
+        }
 
-            return Ok(students);
+        [HttpGet("{idCard}")]
+        public async Task<IActionResult> Get(string idCard)
+        {
+            var student = await _userManager.FindByIdCardAsync(idCard);
+            if (student is null)
+                return NotFound();
+
+            return Ok(_mapper.Map<StudentDTO>(student));
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreateStudentDTO dto, CancellationToken cancellationToken=default)
+        public async Task<IActionResult> Create([FromBody] CreateStudentDTO dto, CancellationToken cancellationToken=default)
         {
             var department = await _departmentRepository.FindByIdAsync(dto.DepartmentId, cancellationToken);
             if (department is null)
@@ -54,29 +61,28 @@ namespace SchoolManagement.Api.Controllers
 
             var student = _mapper.Map<Student>(dto);
             student.Department = department;
-            student.IdCard = GenerateIdCard(department.Students.Max(d => d.IdCard)!, department.ShortName);
+            student.IdCard = GenerateIdCard(department.Students.Max(d => d.IdCard), department.ShortName);
             student.UserName = student.IdCard;
 
-            var result = await _userManager.CreateAsync(student, "123123");
+            var result = await _userManager.CreateAsync(student, GeneratePassword(dto.Birthdate));
             if (!result.Succeeded)
             { 
                 return BadRequest(result);
             }
 
             // Add user to specified roles
-            var addtoRoleResullt = await _userManager.AddToRoleAsync(user, "Student");
+            var addtoRoleResullt = await _userManager.AddToRoleAsync(student, "student");
             if (!addtoRoleResullt.Succeeded)
             {
                 return BadRequest("Fail to add role");
             }
 
-            await _studentRepository.SaveChangesAsync(cancellationToken);
-            return Ok(student);
+            return CreatedAtAction(nameof(Get), new { student.IdCard }, _mapper.Map<StudentDTO>(student));
         }
 
-        private static string GenerateIdCard(string prevId, string department)
+        private static string GenerateIdCard(string? prevId, string department)
         {
-            var academicYear = DateTime.Now.Year.ToString("yy");
+            var academicYear = DateTime.Now.ToString("yy");
             if (!string.IsNullOrEmpty(prevId))
             {
                 prevId = prevId.Remove(0, 8);
@@ -85,8 +91,11 @@ namespace SchoolManagement.Api.Controllers
             }
             else
                 return string.Format("{0}{0}IU{1}001", department, academicYear);
-        }   
-
-
+        }
+        
+        private static string GeneratePassword(DateTime birthDate)
+        {
+            return birthDate.ToString("ddMMyy");
+        }
     }
 }

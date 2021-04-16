@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SchoolManagement.Api.Services;
-using SchoolManagement.Core.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -30,6 +29,6 @@ namespace SchoolManagement.Api.DataObjects
         public string? Address { get; set; }
         public bool? IsHead { get; set; }
 
-        public ICollection<Class> Classes { get; set; } = Array.Empty<Class>();
+        public ICollection<ClassDTO> Classes { get; set; } = Array.Empty<ClassDTO>();
     }
 }

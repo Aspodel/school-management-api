@@ -36,26 +36,36 @@ namespace SchoolManagement.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken = default)
         {
-            var users = await _userManager.FindAll().ToListAsync();
+            var users = await _userManager.FindAll().ToListAsync(cancellationToken);
             return Ok(_mapper.Map<IEnumerable<UserDTO>>(users));
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateUser(CreateUserDTO dTO, CancellationToken cancellationToken = default)
+        [HttpGet("{idCard}")]
+        public async Task<IActionResult> Get(string idCard)
         {
-            var user = _mapper.Map<User>(dTO);
+            var user = await _userManager.FindByIdCardAsync(idCard);
+            if (user is null)
+                return NotFound();
+
+            return Ok(_mapper.Map<UserDTO>(user));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] CreateUserDTO dto)
+        {
+            var user = _mapper.Map<User>(dto);
             user.IdCard = await GenerateIdCard();
             user.UserName = user.IdCard;
 
-            var result = await _userManager.CreateAsync(user, dTO.Password);
+            var result = await _userManager.CreateAsync(user, dto.Password);
             if (!result.Succeeded)
             {
                 return BadRequest(result);
             }
 
-            return Ok(user);
+            return Ok(_mapper.Map<UserDTO>(user));
         }
 
         private async Task<string> GenerateIdCard()
@@ -73,7 +83,7 @@ namespace SchoolManagement.Api.Controllers
         }
 
         [HttpPut("{idCard}")]
-        public async Task<IActionResult> UpdateUser(UserDTO dTO)
+        public async Task<IActionResult> Update(UserDTO dTO)
         {
             var user = await _userManager.FindByIdCardAsync(dTO.IdCard);
             if (user is null || user.IsDeleted)

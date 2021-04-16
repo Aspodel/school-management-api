@@ -19,7 +19,8 @@ namespace SchoolManagement.Repository
             => _dbSet
                 .WhereIf(predicate != null, predicate!)
                 .Include(d => d.Teachers)
-                .Include(d=>d.Students);
+                .Include(d => d.Students)
+                .Include(d => d.Courses);
 
         public override async Task<Department?> FindByIdAsync(int id, CancellationToken cancellationToken = default)
             => await FindAll(d => d.Id == id)

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SchoolManagement.Api.DataObjects.Get;
 using SchoolManagement.Api.Services;
-using SchoolManagement.Core.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -20,6 +20,6 @@ namespace SchoolManagement.Api.DataObjects
 
         public int Credits { get; set; }
 
-        public ICollection<Class> Classes { get; set; } = Array.Empty<Class>();
+        public ICollection<GetClassDTO> Classes { get; set; } = Array.Empty<GetClassDTO>();
     }
 }

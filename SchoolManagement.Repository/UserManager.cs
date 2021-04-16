@@ -29,11 +29,34 @@ namespace SchoolManagement.Repository
         {
         }
 
-        public async Task<User> FindByIdCardAsync(string id)
-            => await Users.Where(u => u.IdCard == id).FirstOrDefaultAsync();
+        public async Task<User> FindByIdCardAsync(string idCard)
+            => await Users.Where(u => u.IdCard == idCard).FirstOrDefaultAsync();
+
+        public new async Task<User?> FindByNameAsync(string userName)
+        {
+            var user = await base.FindByNameAsync(userName);
+            if (user is null || user.IsDeleted)
+                return null;
+
+            return user;
+        }
 
         public IQueryable<User> FindAll(Expression<Func<User, bool>>? predicate = null)
             => Users
+                .Where(u => !u.IsDeleted)
                 .WhereIf(predicate != null, predicate!);
+
+        public IQueryable<User> FindAllStudent(Expression<Func<User, bool>>? predicate = null)
+            => Users
+                .Where(u => !u.IsDeleted)
+                .Where(u => u.UserRoles.Any(us => us.Role!.NormalizedName == "STUDENT"))
+                .WhereIf(predicate != null, predicate!);
+
+        public IQueryable<User> FindAllTeacher(Expression<Func<User, bool>>? predicate = null)
+            => Users
+                .Where(u => !u.IsDeleted)
+                .Where(u => u.UserRoles.Any(us => us.Role!.NormalizedName == "TEACHER"))
+                .WhereIf(predicate != null, predicate!);
+                
     }
 }

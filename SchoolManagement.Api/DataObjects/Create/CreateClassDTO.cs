@@ -14,7 +14,7 @@ namespace SchoolManagement.Api.DataObjects.Create
         [Required]
         public int CourseId { get; set; }
 
-        public string? TeacherId { get; set; }
+        public string TeacherId { get; set; } = string.Empty;
         public string Room { get; set; } = string.Empty;
         public DayOfWeek Day { get; set; }
         public int StartPeriods { get; set; }

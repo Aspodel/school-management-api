@@ -16,18 +16,51 @@ namespace SchoolManagement.Api.DataObjects
 
 
             CreateMap<User, UserDTO>()
-                .ForMember(d => d.Roles, o => o.MapFrom(s => s.UserRoles.Select(ur => ur.Role!.Name))); 
-            CreateMap<UserDTO, User>();
+                .ForMember(d => d.Roles, opt => opt.MapFrom(s => s.UserRoles.Select(ur => ur.Role!.Name)));
+            CreateMap<UserDTO, User>()
+                .ForMember(d => d.IdCard, opt => opt.Ignore());
+            CreateMap<CreateUserDTO, User>();
 
-            CreateMap<CreateUserDTO, User>();            
-            CreateMap<CreateUserDTO, Student>();
+
+            CreateMap<Class, ClassDTO>();
+            CreateMap<ClassDTO, Class>()
+                .ForMember(d => d.Id, opt => opt.Ignore())
+                .ForMember(d => d.ClassCode, opt => opt.Ignore());
+            CreateMap<CreateClassDTO, Class>();
+            CreateMap<Class, GetClassDTO>()
+                .ForMember(d => d.Teacher, opt => opt.MapFrom(s => s.Teacher == null ? null : s.Teacher.FullName));
 
 
-            CreateMap<CreateDepartmentDTO, Department>();
-            CreateMap<Department, GetDepartmentDTO>();
-
+            CreateMap<Course, CourseDTO>()
+                .ForMember(d => d.Classes, opt => opt.MapFrom(d => d.Classes));
+            CreateMap<CourseDTO, Course>()
+                .ForMember(d => d.Id, opt => opt.Ignore())
+                .ForMember(d => d.CourseCode, opt => opt.Ignore());
             CreateMap<CreateCourseDTO, Course>();
+            CreateMap<Course, GetCourseDTO>()
+                .ForMember(d => d.Department, opt => opt.MapFrom(s => s.Department == null ? null : s.Department.Name))
+                .ForMember(d => d.Classes, opt => opt.MapFrom(s => s.Classes.Count));
 
+
+            CreateMap<Department, DepartmentDTO>();
+                //.ForMember(d => d.Courses, opt => opt.MapFrom(d => d.Courses.Select(c => c.Name)))
+                //.ForMember(d => d.Teachers, opt => opt.MapFrom(d => d.Teachers))
+                //.ForMember(d => d.Students, opt => opt.MapFrom(d => d.Students));
+            CreateMap<DepartmentDTO, Department>()
+                .ForMember(d => d.Id, opt => opt.Ignore());
+            CreateMap<CreateDepartmentDTO, Department>();
+
+
+            CreateMap<Student, StudentDTO>();
+            CreateMap<StudentDTO, Student>()
+                .ForMember(d => d.IdCard, opt => opt.Ignore());
+            CreateMap<CreateStudentDTO, Student>();
+
+
+            CreateMap<Teacher, TeacherDTO>();
+            CreateMap<TeacherDTO, Teacher>()
+                .ForMember(d => d.IdCard, opt => opt.Ignore());
+            CreateMap<CreateTeacherDTO, Teacher>();
         }
     }
 }

@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SchoolManagement.Api.DataObjects;
-using SchoolManagement.Api.DataObjects.Create;
-using SchoolManagement.Api.DataObjects.Get;
 using SchoolManagement.Contracts;
 using SchoolManagement.Core.Entities;
 using System.Collections.Generic;
@@ -30,37 +28,37 @@ namespace SchoolManagement.Api.Controllers
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken = default)
         {
             var departments = await _departmentRepository.FindAll().ToListAsync(cancellationToken);
-            return Ok(_mapper.Map<IEnumerable<GetDepartmentDTO>>(departments));
+            return Ok(_mapper.Map<IEnumerable<DepartmentDTO>>(departments));
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> Get(int id, CancellationToken cancellationToken = default)
         {
-            var department = await _departmentRepository.FindByIdAsync(id);
+            var department = await _departmentRepository.FindByIdAsync(id, cancellationToken);
             if (department is null)
                 return NotFound();
 
-            return Ok(_mapper.Map<GetDepartmentDTO>(department));
+            return Ok(_mapper.Map<DepartmentDTO>(department));
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreateDepartmentDTO dTO, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Create([FromBody] DepartmentDTO dto, CancellationToken cancellationToken = default)
         {
-            var department = _mapper.Map<Department>(dTO);
+            var department = _mapper.Map<Department>(dto);
             _departmentRepository.Add(department);
             await _departmentRepository.SaveChangesAsync(cancellationToken);
 
-            return CreatedAtAction(nameof(Get), new { department.Id }, _mapper.Map<GetDepartmentDTO>(department));
+            return CreatedAtAction(nameof(Get), new { department.Id }, _mapper.Map<DepartmentDTO>(department));
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(DepartmentDTO dTO, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Update([FromBody] DepartmentDTO dto, CancellationToken cancellationToken = default)
         {
-            var department = await _departmentRepository.FindByIdAsync(dTO.Id, cancellationToken);
+            var department = await _departmentRepository.FindByIdAsync(dto.Id, cancellationToken);
             if (department is null)
                 return NotFound();
 
-            _mapper.Map(dTO, department);
+            _mapper.Map(dto, department);
             await _departmentRepository.SaveChangesAsync(cancellationToken);
 
             return NoContent();

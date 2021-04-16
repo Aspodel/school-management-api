@@ -2,24 +2,21 @@
 using SchoolManagement.Api.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace SchoolManagement.Api.DataObjects
+namespace SchoolManagement.Api.DataObjects.Get
 {
-    [ModelBinder(typeof(MultipleSourcesModelBinder<ClassDTO>))]
-    public class ClassDTO : BaseDTO
+    [ModelBinder(typeof(MultipleSourcesModelBinder<GetClassDTO>))]
+    public class GetClassDTO
     {
-        [FromRoute]
         public string ClassCode { get; set; } = string.Empty;
-
-        public int CourseId { get; set; }
-        public string? TeacherId { get; set; }
+        public string Teacher { get; set; } = string.Empty;
         public string Room { get; set; } = string.Empty;
         public DayOfWeek Day { get; set; }
         public int StartPeriods { get; set; }
         public int Periods { get; set; }
         public int? Slot { get; set; }
         public int? RestSlot { get; set; }
-
-        public ICollection<StudentDTO> Students { get; set; } = Array.Empty<StudentDTO>();
     }
 }

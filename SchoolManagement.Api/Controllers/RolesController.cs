@@ -34,7 +34,7 @@ namespace SchoolManagement.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(RoleDTO dTO)
+        public async Task<IActionResult> Create([FromBody] RoleDTO dTO)
         {
             var role = _mapper.Map<Role>(dTO);
             await _roleManager.CreateAsync(role);
@@ -43,7 +43,7 @@ namespace SchoolManagement.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(RoleDTO dTO)
+        public async Task<IActionResult> Update([FromBody] RoleDTO dTO)
         {
             var role = await _roleManager.FindByIdAsync(dTO.Id);
             if (role is null)

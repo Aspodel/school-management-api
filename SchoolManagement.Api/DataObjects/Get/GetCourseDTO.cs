@@ -1,17 +1,15 @@
-﻿using SchoolManagement.Core.Entities;
-using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
+using SchoolManagement.Api.Services;
 
 namespace SchoolManagement.Api.DataObjects.Get
 {
+    [ModelBinder(typeof(MultipleSourcesModelBinder<GetCourseDTO>))]
     public class GetCourseDTO
     {
-        public int Id { get; set; }
         public string CourseCode { get; set; } = string.Empty;
-        public int DepartmentId { get; set; }
+        public string Department { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public int Credits { get; set; }
-
-        public virtual ICollection<Class> Classes { get; set; } = Array.Empty<Class>();
+        public int Classes { get; set; }
     }
 }
