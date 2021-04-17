@@ -2,7 +2,7 @@
 {
     public class LoginModel
     {
-        public string IdCard { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
+        public string IdCard { get; set; }
+        public string Password { get; set; }
     }
 }

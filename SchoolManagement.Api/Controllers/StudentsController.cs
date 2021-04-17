@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SchoolManagement.Api.DataObjects;
 using SchoolManagement.Api.DataObjects.Create;
 using SchoolManagement.Contracts;
+using SchoolManagement.Core.Database;
 using SchoolManagement.Core.Entities;
 using SchoolManagement.Repository;
 using System;
@@ -36,7 +38,7 @@ namespace SchoolManagement.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken = default)
         {
-            var students = await _userManager.FindAllStudents().ToListAsync(cancellationToken);
+            var students = await _userManager.FindAllStudent().ToListAsync(cancellationToken);
             return Ok(_mapper.Map<IEnumerable<StudentDTO>>(students));
         }
 
