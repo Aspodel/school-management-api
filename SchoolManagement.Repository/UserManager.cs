@@ -46,17 +46,25 @@ namespace SchoolManagement.Repository
                 .Where(u => !u.IsDeleted)
                 .WhereIf(predicate != null, predicate!);
 
-        public IQueryable<User> FindAllStudent(Expression<Func<User, bool>>? predicate = null)
+        public IQueryable<User> FindAllStudents(Expression<Func<User, bool>>? predicate = null)
             => Users
                 .Where(u => !u.IsDeleted)
-                .Where(u => u.UserRoles.Any(us => us.Role!.NormalizedName == "STUDENT"))
+                .Where(u => u.UserRoles.Any(ur => ur.Role!.Name == "student"))
                 .WhereIf(predicate != null, predicate!);
 
-        public IQueryable<User> FindAllTeacher(Expression<Func<User, bool>>? predicate = null)
+        public IQueryable<User> FindAllTeachers(Expression<Func<User, bool>>? predicate = null)
             => Users
                 .Where(u => !u.IsDeleted)
-                .Where(u => u.UserRoles.Any(us => us.Role!.NormalizedName == "TEACHER"))
+                .Where(u => u.UserRoles.Any(us => us.Role!.Name == "teacher"))
                 .WhereIf(predicate != null, predicate!);
-                
+
+
+        public IQueryable<User> FindStudentByDepartment(int departmentId, Expression<Func<User, bool>>? predicate = null)
+            => FindAllStudents().Where(s => s.DepartmentId == departmentId);
+
+        public async Task<User> FindStudentByIdCard(string idCard, Expression<Func<User, bool>>? predicate = null)
+            => await FindAllStudents()
+                .Where(s => s.IdCard == idCard)
+                .FirstOrDefaultAsync();
     }
 }
