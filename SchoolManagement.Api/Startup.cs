@@ -86,6 +86,7 @@ namespace SchoolManagement.Api
             })
                     .AddEntityFrameworkStores<ApplicationDbContext>()
                     .AddUserManager<UserManager>()
+                    .AddUserManager<StudentManager>()
                     .AddDefaultTokenProviders();
 
             services.Configure<JwTokenConfig>(Configuration.GetSection("JwTokenConfig"));

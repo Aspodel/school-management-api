@@ -83,14 +83,27 @@ namespace SchoolManagement.Api.Controllers
         }
 
         [HttpPut("{idCard}")]
-        public async Task<IActionResult> Update(UserDTO dTO)
+        public async Task<IActionResult> Update(UserDTO dto)
         {
-            var user = await _userManager.FindByIdCardAsync(dTO.IdCard);
+            var user = await _userManager.FindByIdCardAsync(dto.IdCard);
             if (user is null || user.IsDeleted)
                 return NotFound();
 
-            _mapper.Map(dTO, user);
+            _mapper.Map(dto, user);
             await _userManager.UpdateAsync(user);
+
+            ICollection<string> requestRoles = dto.Roles;
+            ICollection<string> originalRoles = await _userManager.GetRolesAsync(user);
+
+            // Delete Roles
+            ICollection<string> deleteRoles = originalRoles.Except(requestRoles).ToList();
+            if (deleteRoles.Count > 0)
+                await _userManager.RemoveFromRolesAsync(user, deleteRoles);
+
+            // Add Roles
+            ICollection<string> newRoles = requestRoles.Except(originalRoles).ToList();
+            if (newRoles.Count > 0)
+                await _userManager.AddToRolesAsync(user, newRoles);
 
             return NoContent();
         }

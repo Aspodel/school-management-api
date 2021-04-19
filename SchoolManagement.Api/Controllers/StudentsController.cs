@@ -22,30 +22,32 @@ namespace SchoolManagement.Api.Controllers
     [ApiController]
     public class StudentsController : ControllerBase
     {
-        private readonly UserManager _userManager;
+        private readonly StudentManager _studentManager;
         private readonly IStudentRepository _studentRepository;
         private readonly IMapper _mapper;
         private readonly IDepartmentRepository _departmentRepository;
+        private readonly IClassRepository _classRepository;
 
-        public StudentsController(UserManager userManager ,IStudentRepository studentRepository, IMapper mapper, IDepartmentRepository departmentRepository)
+        public StudentsController(StudentManager studentManager ,IStudentRepository studentRepository, IMapper mapper, IDepartmentRepository departmentRepository, IClassRepository classRepository)
         {
-            _userManager = userManager;
+            _studentManager = studentManager;
             _studentRepository = studentRepository;
             _mapper = mapper;
             _departmentRepository = departmentRepository;
+            _classRepository = classRepository;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken = default)
         {
-            var students = await _userManager.FindAllStudent().ToListAsync(cancellationToken);
+            var students = await _studentManager.FindAll().ToListAsync(cancellationToken);
             return Ok(_mapper.Map<IEnumerable<StudentDTO>>(students));
         }
 
         [HttpGet("{idCard}")]
         public async Task<IActionResult> Get(string idCard)
         {
-            var student = await _userManager.FindByIdCardAsync(idCard);
+            var student = await _studentManager.FindByIdCardAsync(idCard);
             if (student is null)
                 return NotFound();
 
@@ -64,14 +66,14 @@ namespace SchoolManagement.Api.Controllers
             student.IdCard = GenerateIdCard(department.Students.Max(d => d.IdCard), department.ShortName);
             student.UserName = student.IdCard;
 
-            var result = await _userManager.CreateAsync(student, GeneratePassword(dto.Birthdate));
+            var result = await _studentManager.CreateAsync(student, GeneratePassword(dto.Birthdate));
             if (!result.Succeeded)
             { 
                 return BadRequest(result);
             }
 
             // Add user to specified roles
-            var addtoRoleResullt = await _userManager.AddToRoleAsync(student, "student");
+            var addtoRoleResullt = await _studentManager.AddToRoleAsync(student, "student");
             if (!addtoRoleResullt.Succeeded)
             {
                 return BadRequest("Fail to add role");
@@ -96,6 +98,60 @@ namespace SchoolManagement.Api.Controllers
         private static string GeneratePassword(DateTime birthDate)
         {
             return birthDate.ToString("ddMMyy");
+        }
+
+        [HttpPut("{idCard}")]
+        public async Task<IActionResult> Update(StudentDTO dto)
+        {
+            var student = await _studentManager.FindByIdCardAsync(dto.IdCard);
+            if (student is null || student.IsDeleted)
+                return NotFound();
+
+            _mapper.Map(dto, student);
+
+            ICollection<Class> classes = student.Classes;
+            ICollection<int> requestClasses = dto.Classes;
+            ICollection<int> originalClasses = student.Classes.Select(c => c.Id).ToList();
+
+            // Delete Classes
+            ICollection<int> deleteClasses = originalClasses.Except(requestClasses).ToList();
+            if (deleteClasses.Count > 0) { 
+                foreach(var itemClass in deleteClasses)
+                {
+                    var item = classes.First(c => c.Id == itemClass);
+                    classes.Remove(item);
+                }
+            }
+
+            // Add Classes
+            ICollection<int> newClasses = requestClasses.Except(originalClasses).ToList();
+            if (newClasses.Count > 0)
+            {
+                foreach (var itemClass in deleteClasses)
+                {
+                    var item = await _classRepository.FindByIdAsync(itemClass);
+                    if (item is null)
+                        return BadRequest("ClassId is not valid");
+
+                    classes.Add(item);
+                }
+            }
+
+            // Pass classes to student
+            student.Classes = classes;
+
+            await _studentManager.UpdateAsync(student);
+
+            return NoContent();
+        }
+
+        [HttpDelete("{idCard}")]
+        public async Task<IActionResult> Delete(string idCard)
+        {
+            var student = await _studentManager.FindByIdCardAsync(idCard);
+            student.IsDeleted = true;
+            await _studentManager.UpdateAsync(student);
+            return NoContent();
         }
     }
 }
