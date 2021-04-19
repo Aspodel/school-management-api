@@ -54,6 +54,13 @@ namespace SchoolManagement.Api.Controllers
             return Ok(_mapper.Map<StudentDTO>(student));
         }
 
+        [HttpGet("{departmentId}")]
+        public async Task<IActionResult> GetByDepartment(int departmentId, CancellationToken cancellationToken = default)
+        {
+            var students = await _studentManager.FindAll(departmentId).ToListAsync(cancellationToken);
+            return Ok(_mapper.Map<IEnumerable<StudentDTO>>(students));
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateStudentDTO dto, CancellationToken cancellationToken=default)
         {

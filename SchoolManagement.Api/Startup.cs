@@ -86,8 +86,14 @@ namespace SchoolManagement.Api
             })
                     .AddEntityFrameworkStores<ApplicationDbContext>()
                     .AddUserManager<UserManager>()
-                    .AddUserManager<StudentManager>()
                     .AddDefaultTokenProviders();
+
+            services.AddIdentityCore<Student>()
+                .AddRoles<IdentityRole>()
+                .AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<Student, IdentityRole>>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddUserManager<StudentManager>()
+                .AddDefaultTokenProviders();
 
             services.Configure<JwTokenConfig>(Configuration.GetSection("JwTokenConfig"));
 

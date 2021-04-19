@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SchoolManagement.Repository
@@ -28,13 +27,18 @@ namespace SchoolManagement.Repository
         ) : base(store, optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors, services, logger)
         {
         }
+
         public async Task<Student> FindByIdCardAsync(string idCard)
             => await Users.Where(u => u.IdCard == idCard).FirstOrDefaultAsync();
-
 
         public IQueryable<Student> FindAll(Expression<Func<Student, bool>>? predicate = null)
             => Users
                 .Where(u => !u.IsDeleted)
+                .Where(u => u.UserRoles.Any(us => us.Role!.NormalizedName == "STUDENT"))
                 .WhereIf(predicate != null, predicate!);
+
+        public IQueryable<Student> FindAll(int departmentId, Expression<Func<Student, bool>>? predicate = null)
+            => FindAll(predicate)
+                .Where(s => s.DepartmentId == departmentId);
     }
 }
