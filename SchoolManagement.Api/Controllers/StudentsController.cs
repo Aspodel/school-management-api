@@ -144,7 +144,6 @@ namespace SchoolManagement.Api.Controllers
                 }
             }
 
-            // Pass classes to student
             student.Classes = classes;
 
             await _studentManager.UpdateAsync(student);

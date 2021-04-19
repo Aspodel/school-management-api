@@ -89,8 +89,8 @@ namespace SchoolManagement.Api
                     .AddDefaultTokenProviders();
 
             services.AddIdentityCore<Student>()
-                .AddRoles<IdentityRole>()
-                .AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<Student, IdentityRole>>()
+                .AddRoles<Role>()
+                .AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<Student, Role>>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddUserManager<StudentManager>()
                 .AddDefaultTokenProviders();
