@@ -6,6 +6,7 @@ using SchoolManagement.Api.DataObjects;
 using SchoolManagement.Api.DataObjects.Create;
 using SchoolManagement.Contracts;
 using SchoolManagement.Core.Entities;
+using SchoolManagement.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,14 +22,14 @@ namespace SchoolManagement.Api.Controllers
     {
         private readonly IClassRepository _classRepository;
         private readonly ICourseRepository _courseRepository;
-        private readonly ITeacherRepository _teacherRepository;
+        private readonly TeacherManager _teacherManager;
         private readonly IMapper _mapper;
 
-        public ClassesController(IClassRepository classRepository ,ICourseRepository courseRepository,ITeacherRepository teacherRepository, IMapper mapper)
+        public ClassesController(IClassRepository classRepository ,ICourseRepository courseRepository,TeacherManager teacherManager, IMapper mapper)
         {
             _classRepository = classRepository;
             _courseRepository = courseRepository;
-            _teacherRepository = teacherRepository;
+            _teacherManager = teacherManager;
             _mapper = mapper;
         }
 
@@ -59,8 +60,8 @@ namespace SchoolManagement.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateClassDTO dto, CancellationToken cancellationToken = default)
         {
-            var course = await _courseRepository.FindByIdAsync(dto.CourseId, cancellationToken);
-            var teacher = await _teacherRepository.FindByIdAsync(dto.TeacherId, cancellationToken);
+            var course = await _courseRepository.FindByCourseCode(dto.CourseCode, cancellationToken);
+            var teacher = await _teacherManager.FindByIdCardAsync(dto.TeacherIdCard);
             if (course is null || teacher is null)
                 return BadRequest("Course or Teacher is not exist");
 

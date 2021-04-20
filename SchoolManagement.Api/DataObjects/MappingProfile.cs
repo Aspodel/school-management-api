@@ -26,7 +26,9 @@ namespace SchoolManagement.Api.DataObjects
             CreateMap<ClassDTO, Class>()
                 .ForMember(d => d.Id, opt => opt.Ignore())
                 .ForMember(d => d.ClassCode, opt => opt.Ignore());
-            CreateMap<CreateClassDTO, Class>();
+            CreateMap<CreateClassDTO, Class>()
+                .ForMember(d => d.CourseId, opt => opt.Ignore())
+                .ForMember(d => d.TeacherId, opt => opt.Ignore());
             CreateMap<Class, GetClassDTO>()
                 .ForMember(d => d.Teacher, opt => opt.MapFrom(s => s.Teacher == null ? null : s.Teacher.FullName));
 
@@ -58,7 +60,8 @@ namespace SchoolManagement.Api.DataObjects
             CreateMap<CreateStudentDTO, Student>();
 
 
-            CreateMap<Teacher, TeacherDTO>();
+            CreateMap<Teacher, TeacherDTO>()
+                .ForMember(d => d.Classes, opt => opt.MapFrom(s => s.Classes.Select(c => c.Id)));
             CreateMap<TeacherDTO, Teacher>()
                 .ForMember(d => d.IdCard, opt => opt.Ignore());
             CreateMap<CreateTeacherDTO, Teacher>();

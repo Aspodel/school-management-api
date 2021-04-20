@@ -8,38 +8,39 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace SchoolManagement.Repository
 {
-    public class StudentManager : UserManager<Student>
+    public class TeacherManager : UserManager<Teacher>
     {
-        public StudentManager(
-            IUserStore<Student> store,
+        public TeacherManager(
+            IUserStore<Teacher> store,
             IOptions<IdentityOptions> optionsAccessor,
-            IPasswordHasher<Student> passwordHasher,
-            IEnumerable<IUserValidator<Student>> userValidators,
-            IEnumerable<IPasswordValidator<Student>> passwordValidators,
+            IPasswordHasher<Teacher> passwordHasher,
+            IEnumerable<IUserValidator<Teacher>> userValidators,
+            IEnumerable<IPasswordValidator<Teacher>> passwordValidators,
             ILookupNormalizer keyNormalizer,
             IdentityErrorDescriber errors,
             IServiceProvider services,
-            ILogger<UserManager<Student>> logger
+            ILogger<UserManager<Teacher>> logger
         ) : base(store, optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors, services, logger)
         {
         }
 
-        public async Task<Student> FindByIdCardAsync(string idCard)
+        public async Task<Teacher> FindByIdCardAsync(string idCard)
             => await Users
                 .Where(u => u.IdCard == idCard)
-                .Where(u => u.UserRoles.Any(us => us.Role!.NormalizedName == "STUDENT"))
+                .Where(u => u.UserRoles.Any(us => us.Role!.NormalizedName == "TEACHER"))
                 .FirstOrDefaultAsync();
 
-        public IQueryable<Student> FindAll(Expression<Func<Student, bool>>? predicate = null)
+        public IQueryable<Teacher> FindAll(Expression<Func<Teacher, bool>>? predicate = null)
             => Users
                 .Where(u => !u.IsDeleted)
                 .WhereIf(predicate != null, predicate!);
 
-        public IQueryable<Student> FindAll(int departmentId, Expression<Func<Student, bool>>? predicate = null)
+        public IQueryable<Teacher> FindAll(int departmentId, Expression<Func<Teacher, bool>>? predicate = null)
             => FindAll(predicate)
                 .Where(s => s.DepartmentId == departmentId);
     }

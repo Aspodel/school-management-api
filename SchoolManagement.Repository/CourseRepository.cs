@@ -25,8 +25,9 @@ namespace SchoolManagement.Repository
             => FindAll(predicate)
                 .Where(c => c.DepartmentId == departmentId);
 
-        //public virtual async Task<Course?> FindByIdAsync(string courseCode, CancellationToken cancellationToken = default)
-        //    => await FindAll(c => c.CourseCode == courseCode)
-        //        .FirstOrDefaultAsync(cancellationToken);
+        public async Task<Course> FindByCourseCode(string courseCode, CancellationToken cancellationToken = default)
+            => await FindAll()
+                .Where(c => c.CourseCode == courseCode)
+                .FirstOrDefaultAsync(cancellationToken);
     }
 }

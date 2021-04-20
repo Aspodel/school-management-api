@@ -81,7 +81,7 @@ namespace SchoolManagement.Api
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequiredLength = 6;
 
-                options.User.RequireUniqueEmail = true;
+                //options.User.RequireUniqueEmail = true;
                 //options.SignIn.RequireConfirmedEmail = true;
             })
                     .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -93,6 +93,13 @@ namespace SchoolManagement.Api
                 .AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<Student, Role>>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddUserManager<StudentManager>()
+                .AddDefaultTokenProviders();
+
+            services.AddIdentityCore<Teacher>()
+                .AddRoles<Role>()
+                .AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<Teacher, Role>>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddUserManager<TeacherManager>()
                 .AddDefaultTokenProviders();
 
             services.Configure<JwTokenConfig>(Configuration.GetSection("JwTokenConfig"));

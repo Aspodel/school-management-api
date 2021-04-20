@@ -10,6 +10,6 @@ namespace SchoolManagement.Contracts
     public interface ICourseRepository : IBaseRepository<Course>
     {
         IQueryable<Course> FindAll(int departmentId, Expression<Func<Course, bool>>? predicate = null);
-        //Task<Course?> FindByIdAsync(string courseCode, CancellationToken cancellationToken = default);
+        Task<Course> FindByCourseCode(string courseCode, CancellationToken cancellationToken = default);
     }
 }

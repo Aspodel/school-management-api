@@ -52,11 +52,11 @@ namespace SchoolManagement.Repository
         //        .Where(u => u.UserRoles.Any(us => us.Role!.NormalizedName == "STUDENT"))
         //        .WhereIf(predicate != null, predicate!);
 
-        public IQueryable<User> FindAllTeacher(Expression<Func<User, bool>>? predicate = null)
-            => Users
-                .Where(u => !u.IsDeleted)
-                .Where(u => u.UserRoles.Any(us => us.Role!.NormalizedName == "TEACHER"))
-                .WhereIf(predicate != null, predicate!);
+        //public IQueryable<User> FindAllTeacher(Expression<Func<User, bool>>? predicate = null)
+        //    => Users
+        //        .Where(u => !u.IsDeleted)
+        //        .Where(u => u.UserRoles.Any(us => us.Role!.NormalizedName == "TEACHER"))
+        //        .WhereIf(predicate != null, predicate!);
                 
     }
 }

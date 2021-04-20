@@ -29,6 +29,6 @@ namespace SchoolManagement.Api.DataObjects
         public string? Address { get; set; }
         public bool? IsHead { get; set; }
 
-        public ICollection<ClassDTO> Classes { get; set; } = Array.Empty<ClassDTO>();
+        public ICollection<int> Classes { get; set; } = Array.Empty<int>();
     }
 }
