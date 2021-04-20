@@ -6,6 +6,8 @@ using SchoolManagement.Repository.Extensions;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SchoolManagement.Repository
 {
@@ -23,6 +25,11 @@ namespace SchoolManagement.Repository
         public IQueryable<Class> FindAll(int courseId, Expression<Func<Class, bool>>? predicate = null)
             => FindAll(predicate)
                 .Where(c => c.CourseId == courseId);
+
+        public override async Task<Class?> FindByIdAsync(int id, CancellationToken cancellationToken = default)
+            => await FindAll(c => c.Id == id)
+                .FirstOrDefaultAsync(cancellationToken);
+                
     }
     
 }

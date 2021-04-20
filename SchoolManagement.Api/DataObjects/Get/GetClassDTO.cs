@@ -11,6 +11,7 @@ namespace SchoolManagement.Api.DataObjects.Get
     public class GetClassDTO
     {
         public string ClassCode { get; set; } = string.Empty;
+        public string Course { get; set; } = string.Empty;
         public string Teacher { get; set; } = string.Empty;
         public string Room { get; set; } = string.Empty;
         public DayOfWeek Day { get; set; }

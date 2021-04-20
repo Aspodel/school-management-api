@@ -16,7 +16,8 @@ namespace SchoolManagement.Repository
 
         public override IQueryable<Student> FindAll(Expression<Func<Student, bool>>? predicate = null)
             => _dbSet
-                .Include(s => s.Department);
+                .Include(s => s.Department)
+                .Include(s => s.Classes);
 
         public virtual async Task<Student?> FindByIdAsync(string idCard, CancellationToken cancellationToken = default)
             => await FindAll(s => s.IdCard == idCard)

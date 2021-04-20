@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SchoolManagement.Api.DataObjects;
 using SchoolManagement.Api.DataObjects.Create;
+using SchoolManagement.Api.DataObjects.Get;
 using SchoolManagement.Contracts;
 using SchoolManagement.Core.Entities;
 using SchoolManagement.Repository;
@@ -47,7 +48,7 @@ namespace SchoolManagement.Api.Controllers
             if (@class is null)
                 return NotFound();
 
-            return Ok(_mapper.Map<ClassDTO>(@class));
+            return Ok(_mapper.Map<GetClassDTO>(@class));
         }
 
         [HttpGet("{courseId}")]
@@ -61,11 +62,15 @@ namespace SchoolManagement.Api.Controllers
         public async Task<IActionResult> Create([FromBody] CreateClassDTO dto, CancellationToken cancellationToken = default)
         {
             var course = await _courseRepository.FindByCourseCode(dto.CourseCode, cancellationToken);
+            if (course is null)
+                return BadRequest(new { message = "Course is not found" });
+
             var teacher = await _teacherManager.FindByIdCardAsync(dto.TeacherIdCard);
-            if (course is null || teacher is null)
-                return BadRequest("Course or Teacher is not exist");
+            if (teacher is null)
+                return BadRequest(new { message = "Teacher is not found" });
 
             var @class = _mapper.Map<Class>(dto);
+            @class.RestSlot = @class.Slot;
             @class.Course = course;
             @class.Teacher = teacher;
             @class.ClassCode = GenerateCourseCode(course.Classes.Max(d => d.ClassCode), course.CourseCode);

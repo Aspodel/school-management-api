@@ -49,6 +49,8 @@ namespace SchoolManagement.Api.Controllers
             if (student is null)
                 return NotFound();
 
+            var classes = student.Classes;
+
             return Ok(_mapper.Map<StudentDTO>(student));
         }
 
@@ -132,11 +134,11 @@ namespace SchoolManagement.Api.Controllers
             ICollection<int> newClasses = requestClasses.Except(originalClasses).ToList();
             if (newClasses.Count > 0)
             {
-                foreach (var itemClass in deleteClasses)
+                foreach (var itemClass in newClasses)
                 {
                     var item = await _classRepository.FindByIdAsync(itemClass);
                     if (item is null)
-                        return BadRequest("ClassId is not valid");
+                        return BadRequest($"ClassId {itemClass} is not valid");
 
                     classes.Add(item);
                 }
@@ -146,7 +148,7 @@ namespace SchoolManagement.Api.Controllers
 
             await _studentManager.UpdateAsync(student);
 
-            return NoContent();
+            return Ok(student);
         }
 
         [HttpDelete("{idCard}")]
