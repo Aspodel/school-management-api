@@ -19,6 +19,7 @@ namespace SchoolManagement.Repository
             => _dbSet
                 .WhereIf(predicate != null, predicate!)
                 .Include(c => c.Teacher)
+                .Include(c => c.Students)
                 .Include(c => c.Course)
                     .ThenInclude(c => c!.Department);
 

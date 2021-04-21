@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SchoolManagement.Api.DataObjects;
 using SchoolManagement.Api.DataObjects.Create;
+using SchoolManagement.Api.DataObjects.Get;
 using SchoolManagement.Contracts;
 using SchoolManagement.Core.Entities;
 using SchoolManagement.Repository;
@@ -21,15 +22,13 @@ namespace SchoolManagement.Api.Controllers
     public class StudentsController : ControllerBase
     {
         private readonly StudentManager _studentManager;
-        private readonly IStudentRepository _studentRepository;
         private readonly IMapper _mapper;
         private readonly IDepartmentRepository _departmentRepository;
         private readonly IClassRepository _classRepository;
 
-        public StudentsController(StudentManager studentManager ,IStudentRepository studentRepository, IMapper mapper, IDepartmentRepository departmentRepository, IClassRepository classRepository)
+        public StudentsController(StudentManager studentManager , IMapper mapper, IDepartmentRepository departmentRepository, IClassRepository classRepository)
         {
             _studentManager = studentManager;
-            _studentRepository = studentRepository;
             _mapper = mapper;
             _departmentRepository = departmentRepository;
             _classRepository = classRepository;
@@ -49,9 +48,7 @@ namespace SchoolManagement.Api.Controllers
             if (student is null)
                 return NotFound();
 
-            var classes = student.Classes;
-
-            return Ok(_mapper.Map<StudentDTO>(student));
+            return Ok(_mapper.Map<GetStudentDTO>(student));
         }
 
         [HttpGet("{departmentId}")]
@@ -125,7 +122,12 @@ namespace SchoolManagement.Api.Controllers
             if (deleteClasses.Count > 0) { 
                 foreach(var itemClass in deleteClasses)
                 {
-                    var item = classes.First(c => c.Id == itemClass);
+                    //var item = classes.First(c => c.Id == itemClass);
+                    var item = await _classRepository.FindByIdAsync(itemClass);
+                    if (item is null)
+                        return BadRequest($"ClassId {itemClass} is not valid");
+
+                    item.RestSlot++;
                     classes.Remove(item);
                 }
             }
@@ -140,12 +142,14 @@ namespace SchoolManagement.Api.Controllers
                     if (item is null)
                         return BadRequest($"ClassId {itemClass} is not valid");
 
+                    item.RestSlot--;
                     classes.Add(item);
                 }
             }
 
             student.Classes = classes;
 
+            await _classRepository.SaveChangesAsync();
             await _studentManager.UpdateAsync(student);
 
             return Ok(student);

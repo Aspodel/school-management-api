@@ -62,6 +62,7 @@ namespace SchoolManagement.Api.DataObjects
                 .ForMember(d => d.DepartmentId, opt => opt.Ignore())
                 .ForMember(d => d.Classes, opt => opt.Ignore());
             CreateMap<CreateStudentDTO, Student>();
+            CreateMap<Student, GetStudentDTO>();
 
 
             CreateMap<Teacher, TeacherDTO>()

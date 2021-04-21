@@ -129,8 +129,6 @@ namespace SchoolManagement.Api
             services.AddScoped<IClassRepository, ClassRepository>();
             services.AddScoped<ICourseRepository, CourseRepository>();
             services.AddScoped<IDepartmentRepository, DepartmentRepository>();
-            services.AddScoped<IStudentRepository, StudentRepository>();
-            services.AddScoped<ITeacherRepository, TeacherRepository>();
 
             var mapperConfig = new MapperConfiguration(mc =>
             {
