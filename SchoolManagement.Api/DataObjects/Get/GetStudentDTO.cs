@@ -11,7 +11,7 @@ namespace SchoolManagement.Api.DataObjects.Get
     public class GetStudentDTO
     {
         public string IdCard { get; set; } = string.Empty;
-        public string Deparment { get; set; } = string.Empty;
+        public string Department { get; set; } = string.Empty;
         public string FullName { get; set; } = string.Empty;
         public bool? Gender { get; set; }
         public DateTime Birthdate { get; set; }

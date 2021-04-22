@@ -41,10 +41,10 @@ namespace SchoolManagement.Api.Controllers
                 return BadRequest(new { message = "Username or password is incorrect" });
 
             var passwordCheck = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
-            if(!passwordCheck.Succeeded)
+            if (!passwordCheck.Succeeded)
                 return BadRequest(new { message = "Username or password is incorrect" });
 
-            //var tokenConfig = _jwTokenConfig
+            //var token = GenerateToken();
 
             return Ok();
         }

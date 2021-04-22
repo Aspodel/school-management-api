@@ -88,7 +88,8 @@ namespace SchoolManagement.Api.Controllers
         {
             if (!string.IsNullOrEmpty(prevId))
             {
-                prevId = prevId.Remove(0, 4);
+                prevId = prevId.Remove(0, prevId.Length - 3);
+                //prevId = prevId.Remove(0, 4);
                 var newId = (int.Parse(prevId) + 1).ToString("D3");
                 return string.Format("IU{0}{1}", department, newId);
             }

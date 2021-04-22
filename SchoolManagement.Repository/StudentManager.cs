@@ -33,9 +33,10 @@ namespace SchoolManagement.Repository
                 .Where(u => u.IdCard == idCard)
                 .Where(u => u.UserRoles.Any(us => us.Role!.NormalizedName == "STUDENT"))
                 .Include(u => u.Department)
-                    .ThenInclude(d=>d.Courses)
                 .Include(u => u.Classes)
-                    .ThenInclude(c=>c.Teacher)
+                    .ThenInclude(c => c.Course)
+                .Include(u => u.Classes)
+                    .ThenInclude(d => d.Teacher)
                 .FirstOrDefaultAsync();
 
         public IQueryable<Student> FindAll(Expression<Func<Student, bool>>? predicate = null)

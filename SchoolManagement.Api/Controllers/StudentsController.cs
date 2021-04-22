@@ -10,6 +10,7 @@ using SchoolManagement.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -91,7 +92,7 @@ namespace SchoolManagement.Api.Controllers
             var academicYear = DateTime.Now.ToString("yy");
             if (!string.IsNullOrEmpty(prevId))
             {
-                prevId = prevId.Remove(0, 8);
+                prevId = prevId.Remove(0, prevId.Length - 3);
                 var newId = (int.Parse(prevId) + 1).ToString("D3");
                 return string.Format("{0}{0}IU{1}{2}", department, academicYear, newId);
             }

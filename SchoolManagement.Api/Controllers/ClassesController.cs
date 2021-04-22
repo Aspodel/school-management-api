@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SchoolManagement.Api.DataObjects;
@@ -8,10 +7,8 @@ using SchoolManagement.Api.DataObjects.Get;
 using SchoolManagement.Contracts;
 using SchoolManagement.Core.Entities;
 using SchoolManagement.Repository;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
