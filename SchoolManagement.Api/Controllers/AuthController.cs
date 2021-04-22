@@ -24,13 +24,13 @@ namespace SchoolManagement.Api.Controllers
     {
         private readonly UserManager _userManager;
         private readonly SignInManager<User> _signInManager;
-        private readonly IOptionsMonitor<JwTokenConfig> _tokenConfig;
+        private readonly IOptionsMonitor<JwTokenConfig> _tokenConfigOptionsAccessor;
 
-        public AuthController(UserManager userManager, SignInManager<User> signInManager, IOptionsMonitor<JwTokenConfig> tokenConfig)
+        public AuthController(UserManager userManager, SignInManager<User> signInManager, IOptionsMonitor<JwTokenConfig> tokenConfigOptionsAccessor)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _tokenConfig = tokenConfig;
+            _tokenConfigOptionsAccessor = tokenConfigOptionsAccessor;
         }
 
         [HttpPost]
@@ -44,9 +44,22 @@ namespace SchoolManagement.Api.Controllers
             if (!passwordCheck.Succeeded)
                 return BadRequest(new { message = "Username or password is incorrect" });
 
-            //var token = GenerateToken();
+            var tokenConfig = _tokenConfigOptionsAccessor.CurrentValue;
+            var token = await GenerateToken(user, tokenConfig);
+            var refresh_token = Guid.NewGuid().ToString().Replace("-", "");
 
-            return Ok();
+            var requestAt = DateTime.UtcNow;
+            var expiresIn = Math.Floor((requestAt.AddDays(1) - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds);
+            var roles = await _userManager.GetRolesAsync(user);
+
+            return Ok(new
+            {
+                requestAt,
+                expiresIn,
+                accessToken = token,
+                refresh_token,
+                roles
+            });
         }
 
         private async Task<string> GenerateToken(User user, JwTokenConfig tokenConfig)
@@ -54,26 +67,25 @@ namespace SchoolManagement.Api.Controllers
             var handler = new JwtSecurityTokenHandler();
 
             var roles = await _userManager.GetRolesAsync(user);
-            var claims = await _userManager.GetClaimsAsync(user);
 
             var identity = new ClaimsIdentity(
                 new GenericIdentity(user.UserName, "TokenAuth"),
-                new[] { new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) }
+                new[] { new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), new Claim("id", user.Id.ToString()) }
                     .Union(roles.Select(role => new Claim(ClaimTypes.Role, role)))
                 );
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenConfig.JWT_Secret));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            //var descriptor = new SecurityTokenDescriptor
-            //{
 
-            //}
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = identity,
+                Expires = DateTime.UtcNow.AddDays(1),
+                SigningCredentials = credentials
+            };
 
-
-            var securityToken = handler.CreateToken(new SecurityTokenDescriptor());
-            var token = handler.WriteToken(securityToken);
-
-            return token;
+            var securityToken = handler.CreateToken(tokenDescriptor);
+            return handler.WriteToken(securityToken);
         }
     }
 }

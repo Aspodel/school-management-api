@@ -57,7 +57,9 @@ namespace SchoolManagement.Api.Controllers
         {
             var user = _mapper.Map<User>(dto);
             user.IdCard = await GenerateIdCard();
-            user.UserName = user.IdCard;
+
+            if (dto.Roles == null)
+                return BadRequest(new { message = "Role is null" });
 
             var result = await _userManager.CreateAsync(user, dto.Password);
             if (!result.Succeeded)
@@ -65,16 +67,27 @@ namespace SchoolManagement.Api.Controllers
                 return BadRequest(result);
             }
 
+            // Add user to specified roles
+            var addtoRoleResullt = await _userManager.AddToRolesAsync(user, dto.Roles);
+            if (!addtoRoleResullt.Succeeded)
+            {
+                return BadRequest("Fail to add role");
+            }
+
             return Ok(_mapper.Map<UserDTO>(user));
         }
 
         private async Task<string> GenerateIdCard()
         {
-            var users = await _userManager.FindAll().ToListAsync();
+            var users = await _userManager.FindAll()
+                .Where(u => u.UserRoles.Any(us => us.Role!.NormalizedName != "STUDENT"))
+                .Where(u => u.UserRoles.Any(us => us.Role!.NormalizedName != "TEACHER"))
+                .ToListAsync();
+
             var prevId = users.Max(u => u.IdCard);
             if (!string.IsNullOrEmpty(prevId))
             {
-                prevId = prevId.Remove(0, 2);
+                prevId = prevId.Remove(0, prevId.Length - 3);
                 var newId = (int.Parse(prevId) + 1).ToString("D3");
                 return string.Format("IU{0}", newId);
             }

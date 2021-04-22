@@ -12,7 +12,7 @@ namespace SchoolManagement.Api.DataObjects
         [FromRoute]
         public string IdCard { get; set; } = string.Empty;
 
-        public string? Username { get; set; }
+        //public string? Username { get; set; }
 
         [Required]
         public string FullName { get; set; } = string.Empty;
