@@ -39,6 +39,7 @@ namespace SchoolManagement.Api.Controllers
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken = default)
         {
             var users = await _userManager.FindAll().ToListAsync(cancellationToken);
+
             return Ok(_mapper.Map<IEnumerable<UserDTO>>(users));
         }
 
@@ -58,9 +59,6 @@ namespace SchoolManagement.Api.Controllers
             var user = _mapper.Map<User>(dto);
             user.IdCard = await GenerateIdCard();
 
-            if (dto.Roles == null)
-                return BadRequest(new { message = "Role is null" });
-
             var result = await _userManager.CreateAsync(user, dto.Password);
             if (!result.Succeeded)
             {
@@ -79,9 +77,13 @@ namespace SchoolManagement.Api.Controllers
 
         private async Task<string> GenerateIdCard()
         {
-            var users = await _userManager.FindAll()
-                .Where(u => u.UserRoles.Any(us => us.Role!.NormalizedName != "STUDENT"))
-                .Where(u => u.UserRoles.Any(us => us.Role!.NormalizedName != "TEACHER"))
+            //var users = await _userManager.FindAll()
+            //    .Where(u => u.UserRoles.Any(us => us.Role!.NormalizedName != "STUDENT"))
+            //    .Where(u => u.UserRoles.Any(us => us.Role!.NormalizedName != "TEACHER"))
+            //    .ToListAsync();
+
+            var users = await _userManager.Users
+                .Where(u => u.IdCard.Length == 5)
                 .ToListAsync();
 
             var prevId = users.Max(u => u.IdCard);
