@@ -4,7 +4,7 @@ using SchoolManagement.Api.Services;
 namespace SchoolManagement.Api.DataObjects.Get
 {
     [ModelBinder(typeof(MultipleSourcesModelBinder<GetCourseDTO>))]
-    public class GetCourseDTO
+    public class GetCourseDTO : BaseDTO
     {
         public string CourseCode { get; set; } = string.Empty;
         public string Department { get; set; } = string.Empty;

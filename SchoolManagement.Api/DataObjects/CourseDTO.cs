@@ -20,6 +20,6 @@ namespace SchoolManagement.Api.DataObjects
 
         public int Credits { get; set; }
 
-        public ICollection<GetClassDTO> Classes { get; set; } = Array.Empty<GetClassDTO>();
+        //public ICollection<GetClassDetailDTO> Classes { get; set; } = Array.Empty<GetClassDetailDTO>();
     }
 }

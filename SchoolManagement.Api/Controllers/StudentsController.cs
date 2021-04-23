@@ -49,7 +49,7 @@ namespace SchoolManagement.Api.Controllers
             if (student is null)
                 return NotFound();
 
-            return Ok(_mapper.Map<GetStudentDTO>(student));
+            return Ok(_mapper.Map<GetStudentDetailDTO>(student));
         }
 
         [HttpGet("{departmentId}")]

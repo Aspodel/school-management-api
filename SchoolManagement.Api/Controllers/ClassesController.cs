@@ -35,7 +35,7 @@ namespace SchoolManagement.Api.Controllers
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken = default)
         {
             var classes = await _classRepository.FindAll().ToListAsync(cancellationToken);
-            return Ok(_mapper.Map<IEnumerable<ClassDTO>>(classes));
+            return Ok(_mapper.Map<IEnumerable<GetClassDTO>>(classes));
         }
 
         [HttpGet("{id}")]
@@ -45,14 +45,14 @@ namespace SchoolManagement.Api.Controllers
             if (@class is null)
                 return NotFound();
 
-            return Ok(_mapper.Map<GetClassDTO>(@class));
+            return Ok(_mapper.Map<GetClassDetailDTO>(@class));
         }
 
         [HttpGet("{courseId}")]
         public async Task<IActionResult> GetByCourseId(int courseId, CancellationToken cancellationToken = default)
         {
             var classes = await _classRepository.FindAll(courseId).ToListAsync(cancellationToken);
-            return Ok(_mapper.Map<IEnumerable<ClassDTO>>(classes));
+            return Ok(_mapper.Map<IEnumerable<GetClassDTO>>(classes));
         }
 
         [HttpPost]
@@ -82,7 +82,7 @@ namespace SchoolManagement.Api.Controllers
         {
             if (!string.IsNullOrEmpty(prevId))
             {
-                prevId = prevId.Remove(0, 7);
+                prevId = prevId.Remove(0, prevId.Length - 2);
                 //prevId = Regex.Replace(prevId, "[^0-9.]", "");
                 var newId = (int.Parse(prevId) + 1).ToString("D2");
                 return string.Format("{0}{1}", course, newId);
@@ -92,7 +92,7 @@ namespace SchoolManagement.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update([FromBody] CourseDTO dto, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Update([FromBody] ClassDTO dto, CancellationToken cancellationToken = default)
         {
             var course = await _classRepository.FindByIdAsync(dto.Id, cancellationToken);
             if (course is null)
