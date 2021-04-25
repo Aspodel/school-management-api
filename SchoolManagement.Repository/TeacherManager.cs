@@ -33,12 +33,17 @@ namespace SchoolManagement.Repository
             => await Users
                 .Where(u => u.IdCard == idCard)
                 .Where(u => u.UserRoles.Any(us => us.Role!.NormalizedName == "TEACHER"))
+                .Include(u => u.Department)
+                .Include(u => u.Classes)
+                    .ThenInclude(c => c.Course)
                 .FirstOrDefaultAsync();
 
         public IQueryable<Teacher> FindAll(Expression<Func<Teacher, bool>>? predicate = null)
             => Users
                 .Where(u => !u.IsDeleted)
-                .WhereIf(predicate != null, predicate!);
+                .WhereIf(predicate != null, predicate!)
+                .Include(u => u.Department)
+                .Include(u => u.Classes);
 
         public IQueryable<Teacher> FindAll(int departmentId, Expression<Func<Teacher, bool>>? predicate = null)
             => FindAll(predicate)

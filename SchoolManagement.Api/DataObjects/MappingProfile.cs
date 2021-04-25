@@ -71,7 +71,8 @@ namespace SchoolManagement.Api.DataObjects
             CreateMap<Student, GetStudentDetailDTO>()
                 .ForMember(d => d.Department, opt => opt.MapFrom(s => s.Department == null ? null : s.Department.Name));
             CreateMap<Student, GetStudentDTO>()
-                .ForMember(d => d.Department, opt => opt.MapFrom(s => s.Department == null ? null : s.Department.Name));
+                .ForMember(d => d.Department, opt => opt.MapFrom(s => s.Department == null ? null : s.Department.Name))
+                .ForMember(d => d.Birthdate, opt => opt.MapFrom(s => s.Birthdate.ToString("dd-MM-yyyy")));
 
 
             CreateMap<Teacher, TeacherDTO>()
@@ -79,6 +80,12 @@ namespace SchoolManagement.Api.DataObjects
             CreateMap<TeacherDTO, Teacher>()
                 .ForMember(d => d.IdCard, opt => opt.Ignore());
             CreateMap<CreateTeacherDTO, Teacher>();
+            CreateMap<Teacher, GetTeacherDetailDTO>()
+                .ForMember(d => d.Department, opt => opt.MapFrom(s => s.Department!.Name))
+                .ForMember(d => d.Birthdate, opt => opt.MapFrom(s => s.Birthdate.ToString("dd-MM-yyyy")));
+            CreateMap<Teacher, GetTeacherDTO>()
+                .ForMember(d => d.Department, opt => opt.MapFrom(s => s.Department!.Name))
+                .ForMember(d => d.Birthdate, opt => opt.MapFrom(s => s.Birthdate.ToString("dd-MM-yyyy")));
         }
     }
 }

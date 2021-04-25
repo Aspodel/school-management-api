@@ -70,7 +70,7 @@ namespace SchoolManagement.Api.Controllers
             return CreatedAtAction(nameof(Get), new { course.Id }, _mapper.Map<CourseDTO>(course));
         }
 
-        private string GenerateCourseCode(string? prevId, string department)
+        private static string GenerateCourseCode(string? prevId, string department)
         {
             if (!string.IsNullOrEmpty(prevId))
             {

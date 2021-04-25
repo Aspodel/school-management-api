@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SchoolManagement.Api.DataObjects.Get;
 using SchoolManagement.Api.Services;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace SchoolManagement.Api.DataObjects

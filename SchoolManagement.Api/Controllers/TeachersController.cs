@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SchoolManagement.Api.DataObjects;
 using SchoolManagement.Api.DataObjects.Create;
+using SchoolManagement.Api.DataObjects.Get;
 using SchoolManagement.Contracts;
 using SchoolManagement.Core.Entities;
 using SchoolManagement.Repository;
@@ -46,7 +46,7 @@ namespace SchoolManagement.Api.Controllers
             if (teacher is null)
                 return NotFound();
 
-            return Ok(_mapper.Map<TeacherDTO>(teacher));
+            return Ok(_mapper.Map<GetTeacherDetailDTO>(teacher));
         }
 
         [HttpGet("{departmentId}")]

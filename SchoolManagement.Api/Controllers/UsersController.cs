@@ -1,14 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using SchoolManagement.Api.DataObjects;
 using SchoolManagement.Api.DataObjects.Create;
-using SchoolManagement.Api.Settings;
-using SchoolManagement.Contracts;
 using SchoolManagement.Core.Entities;
 using SchoolManagement.Repository;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -24,15 +20,11 @@ namespace SchoolManagement.Api.Controllers
     {
         private readonly UserManager _userManager;
         private readonly IMapper _mapper;
-        private readonly JwTokenConfig _jwTokenConfig;
-        private readonly IDepartmentRepository _departmentRepository;
 
-        public UsersController(UserManager userManager, IMapper mapper, IOptions<JwTokenConfig> jwTokenConfig, IDepartmentRepository departmentRepository)
+        public UsersController(UserManager userManager, IMapper mapper)
         {
             _userManager = userManager;
             _mapper = mapper;
-            _jwTokenConfig = jwTokenConfig.Value;
-            _departmentRepository = departmentRepository;
         }
 
         [HttpGet]

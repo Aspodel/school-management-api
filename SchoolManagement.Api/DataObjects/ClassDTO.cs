@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SchoolManagement.Api.Services;
 using System;
-using System.Collections.Generic;
 
 namespace SchoolManagement.Api.DataObjects
 {

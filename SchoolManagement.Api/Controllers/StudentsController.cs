@@ -10,7 +10,6 @@ using SchoolManagement.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -39,7 +38,7 @@ namespace SchoolManagement.Api.Controllers
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken = default)
         {
             var students = await _studentManager.FindAll().ToListAsync(cancellationToken);
-            return Ok(_mapper.Map<IEnumerable<StudentDTO>>(students));
+            return Ok(_mapper.Map<IEnumerable<GetStudentDTO>>(students));
         }
 
         [HttpGet("{idCard}")]
@@ -49,6 +48,7 @@ namespace SchoolManagement.Api.Controllers
             if (student is null)
                 return NotFound();
 
+            //student.Classes = student.Classes.OrderBy(c => c.Day).ThenBy(c => c.StartPeriods).ToList();
             return Ok(_mapper.Map<GetStudentDetailDTO>(student));
         }
 
@@ -56,7 +56,7 @@ namespace SchoolManagement.Api.Controllers
         public async Task<IActionResult> GetByDepartment(int departmentId, CancellationToken cancellationToken = default)
         {
             var students = await _studentManager.FindAll(departmentId).ToListAsync(cancellationToken);
-            return Ok(_mapper.Map<IEnumerable<StudentDTO>>(students));
+            return Ok(_mapper.Map<IEnumerable<GetStudentDTO>>(students));
         }
 
         [HttpPost]
@@ -148,6 +148,7 @@ namespace SchoolManagement.Api.Controllers
                 }
             }
 
+            classes = classes.OrderBy(c => c.Day).ThenBy(c => c.StartPeriods).ToList();
             student.Classes = classes;
 
             await _classRepository.SaveChangesAsync();

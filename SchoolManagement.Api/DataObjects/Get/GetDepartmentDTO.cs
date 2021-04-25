@@ -1,7 +1,4 @@
-﻿using SchoolManagement.Core.Entities;
-using System.Collections.Generic;
-
-namespace SchoolManagement.Api.DataObjects.Get
+﻿namespace SchoolManagement.Api.DataObjects.Get
 {
     public class GetDepartmentDTO
     {
