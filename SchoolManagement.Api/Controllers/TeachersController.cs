@@ -36,7 +36,7 @@ namespace SchoolManagement.Api.Controllers
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken = default)
         {
             var teachers = await _teacherManager.FindAll().ToListAsync(cancellationToken);
-            return Ok(_mapper.Map<IEnumerable<TeacherDTO>>(teachers));
+            return Ok(_mapper.Map<IEnumerable<GetTeacherDTO>>(teachers));
         }
 
         [HttpGet("{idCard}")]
@@ -53,7 +53,7 @@ namespace SchoolManagement.Api.Controllers
         public async Task<IActionResult> GetByDepartment(int departmentId, CancellationToken cancellationToken = default)
         {
             var teachers = await _teacherManager.FindAll(departmentId).ToListAsync(cancellationToken);
-            return Ok(_mapper.Map<IEnumerable<TeacherDTO>>(teachers));
+            return Ok(_mapper.Map<IEnumerable<GetTeacherDTO>>(teachers));
         }
 
         [HttpPost]
