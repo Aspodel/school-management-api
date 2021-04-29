@@ -38,20 +38,20 @@ namespace SchoolManagement.Api.Controllers
             return Ok(_mapper.Map<IEnumerable<GetClassDTO>>(classes));
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id, CancellationToken cancellationToken = default)
+        [HttpGet("{classCode}")]
+        public async Task<IActionResult> Get(string classCode, CancellationToken cancellationToken = default)
         {
-            var @class = await _classRepository.FindByIdAsync(id, cancellationToken);
+            var @class = await _classRepository.FindByClassCode(classCode, cancellationToken);
             if (@class is null)
                 return NotFound();
 
             return Ok(_mapper.Map<GetClassDetailDTO>(@class));
         }
 
-        [HttpGet("{courseId}")]
-        public async Task<IActionResult> GetByCourseId(int courseId, CancellationToken cancellationToken = default)
+        [HttpGet("{courseCode}")]
+        public async Task<IActionResult> GetByCourseCode(string courseCode, CancellationToken cancellationToken = default)
         {
-            var classes = await _classRepository.FindAll(courseId).ToListAsync(cancellationToken);
+            var classes = await _classRepository.FindAll(courseCode).ToListAsync(cancellationToken);
             return Ok(_mapper.Map<IEnumerable<GetClassDTO>>(classes));
         }
 
@@ -75,7 +75,7 @@ namespace SchoolManagement.Api.Controllers
             _classRepository.Add(@class);
             await _classRepository.SaveChangesAsync(cancellationToken);
 
-            return CreatedAtAction(nameof(Get), new { @class.Id }, _mapper.Map<ClassDTO>(@class));
+            return CreatedAtAction(nameof(Get), new { @class.ClassCode }, _mapper.Map<ClassDTO>(@class));
         }
 
         private string GenerateCourseCode(string? prevId, string course)
@@ -91,10 +91,10 @@ namespace SchoolManagement.Api.Controllers
                 return string.Format("{0}01", course);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{classCode}")]
         public async Task<IActionResult> Update([FromBody] ClassDTO dto, CancellationToken cancellationToken = default)
         {
-            var course = await _classRepository.FindByIdAsync(dto.Id, cancellationToken);
+            var course = await _classRepository.FindByClassCode(dto.ClassCode, cancellationToken);
             if (course is null)
                 return NotFound();
 
@@ -104,10 +104,10 @@ namespace SchoolManagement.Api.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken = default)
+        [HttpDelete("{classCode}")]
+        public async Task<IActionResult> Delete(string classCode, CancellationToken cancellationToken = default)
         {
-            var course = await _classRepository.FindByIdAsync(id, cancellationToken);
+            var course = await _classRepository.FindByClassCode(classCode, cancellationToken);
             if (course is null)
                 return NotFound();
 

@@ -18,7 +18,5 @@ namespace SchoolManagement.Api.DataObjects
         public int Periods { get; set; }
         public int? Slot { get; set; }
         public int? RestSlot { get; set; }
-
-        //public ICollection<StudentDTO> Students { get; set; } = Array.Empty<StudentDTO>();
     }
 }

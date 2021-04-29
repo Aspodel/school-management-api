@@ -1,9 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SchoolManagement.Api.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SchoolManagement.Api.DataObjects.Get
 {

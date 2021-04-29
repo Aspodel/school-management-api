@@ -23,14 +23,18 @@ namespace SchoolManagement.Repository
                 .Include(c => c.Course)
                     .ThenInclude(c => c!.Department);
 
-        public IQueryable<Class> FindAll(int courseId, Expression<Func<Class, bool>>? predicate = null)
+        public IQueryable<Class> FindAll(string courseCode, Expression<Func<Class, bool>>? predicate = null)
             => FindAll(predicate)
-                .Where(c => c.CourseId == courseId);
+                .Where(c => c.Course!.CourseCode == courseCode);
 
         public override async Task<Class?> FindByIdAsync(int id, CancellationToken cancellationToken = default)
             => await FindAll(c => c.Id == id)
                 .FirstOrDefaultAsync(cancellationToken);
-                
+
+        public async Task<Class> FindByClassCode(string classCode, CancellationToken cancellationToken = default)
+            => await FindAll()
+                .Where(c => c.ClassCode == classCode)
+                .FirstOrDefaultAsync(cancellationToken);
     }
     
 }

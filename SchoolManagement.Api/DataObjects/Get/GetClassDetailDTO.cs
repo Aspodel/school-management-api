@@ -9,9 +9,9 @@ namespace SchoolManagement.Api.DataObjects.Get
     public class GetClassDetailDTO
     {
         public string ClassCode { get; set; } = string.Empty;
-        public string Course { get; set; } = string.Empty;
-        public string Department { get; set; } = string.Empty;
-        public string Teacher { get; set; } = string.Empty;
+        public CourseDTO Course { get; set; } = null!;
+        public DepartmentDTO Department { get; set; } = null!;
+        public GetTeacherDTO Teacher { get; set; } = null!;
         public string Room { get; set; } = string.Empty;
         public DayOfWeek Day { get; set; }
         public int StartPeriods { get; set; }
