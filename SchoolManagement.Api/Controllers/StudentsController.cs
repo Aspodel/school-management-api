@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SchoolManagement.Api.DataObjects;
@@ -9,6 +12,7 @@ using SchoolManagement.Core.Entities;
 using SchoolManagement.Repository;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -60,7 +64,7 @@ namespace SchoolManagement.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateStudentDTO dto, CancellationToken cancellationToken=default)
+        public async Task<IActionResult> Create([FromBody] CreateStudentDTO dto, CancellationToken cancellationToken = default)
         {
             var department = await _departmentRepository.FindByIdAsync(dto.DepartmentId, cancellationToken);
             if (department is null)
@@ -85,6 +89,67 @@ namespace SchoolManagement.Api.Controllers
             }
 
             return CreatedAtAction(nameof(Get), new { student.IdCard }, _mapper.Map<StudentDTO>(student));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateFromExcel (IFormFile file, CancellationToken cancellationToken = default)
+        {
+            var extension = "." + file.FileName.Split('.')[^1];
+
+            //Create a new Name for the file due to security reasons.
+            var fileName = DateTime.Now.Ticks + extension;
+
+            var pathBuilt = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\files");
+
+            if (!Directory.Exists(pathBuilt))
+            {
+                Directory.CreateDirectory(pathBuilt);
+            }
+
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\files", fileName);
+
+            using (var newStream = new FileStream(path, FileMode.Create))
+            {
+                await file.CopyToAsync(newStream, cancellationToken);
+            }
+
+            var stream = System.IO.File.Open(path, FileMode.Open);
+
+            using (SpreadsheetDocument doc = SpreadsheetDocument.Open(stream, false))
+            {
+                //create the object for workbook part  
+                WorkbookPart workbookPart = doc.WorkbookPart;
+                SharedStringTablePart sstpart = workbookPart.GetPartsOfType<SharedStringTablePart>().First();
+                SharedStringTable sst = sstpart.SharedStringTable;
+
+                WorksheetPart worksheetPart = workbookPart.WorksheetParts.First();
+                Worksheet sheet = worksheetPart.Worksheet;
+
+                var cells = sheet.Descendants<Cell>();
+                var rows = sheet.Descendants<Row>();
+
+                System.Diagnostics.Debug.WriteLine("Row count = {0}", rows.LongCount());
+                System.Diagnostics.Debug.WriteLine("Cell count = {0}", cells.LongCount());
+
+                foreach (Row row in rows)
+                {
+                    foreach (Cell c in row.Elements<Cell>())
+                    {
+                        if ((c.DataType != null) && (c.DataType == CellValues.SharedString))
+                        {
+                            int ssid = int.Parse(c.CellValue!.Text);
+                            string str = sst.ChildElements[ssid].InnerText;
+                            System.Diagnostics.Debug.WriteLine("Shared string {0}: {1}", ssid, str);
+                        }
+                        else if (c.CellValue != null)
+                        {
+                            System.Diagnostics.Debug.WriteLine("Cell contents: {0}", c.CellValue.Text);
+                        }
+                    }
+                }
+            }
+
+            return Ok(new { extension, fileName, path});
         }
 
         private static string GenerateIdCard(string? prevId, string department)
