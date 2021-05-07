@@ -78,7 +78,7 @@ namespace SchoolManagement.Api.Controllers
             return CreatedAtAction(nameof(Get), new { @class.ClassCode }, _mapper.Map<ClassDTO>(@class));
         }
 
-        private string GenerateCourseCode(string? prevId, string course)
+        private static string GenerateCourseCode(string? prevId, string course)
         {
             if (!string.IsNullOrEmpty(prevId))
             {

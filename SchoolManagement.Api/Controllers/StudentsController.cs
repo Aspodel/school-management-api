@@ -219,7 +219,7 @@ namespace SchoolManagement.Api.Controllers
             await _classRepository.SaveChangesAsync();
             await _studentManager.UpdateAsync(student);
 
-            return Ok(student);
+            return NoContent();
         }
 
         [HttpDelete("{idCard}")]
