@@ -32,7 +32,7 @@ namespace SchoolManagement.Repository
         public async Task<Teacher> FindByIdCardAsync(string idCard)
             => await Users
                 .Where(u => u.IdCard == idCard)
-                .Where(u => u.UserRoles.Any(us => us.Role!.NormalizedName == "TEACHER"))
+                //.Where(u => u.UserRoles.Any(us => us.Role!.NormalizedName == "TEACHER"))
                 .Include(u => u.Department)
                 .Include(u => u.Classes)
                     .ThenInclude(c => c.Course)
