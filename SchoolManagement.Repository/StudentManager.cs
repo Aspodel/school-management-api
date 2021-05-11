@@ -35,8 +35,9 @@ namespace SchoolManagement.Repository
                 .Include(u => u.Department)
                 .Include(u => u.Classes)
                     .ThenInclude(c => c.Course)
+                    .ThenInclude(c => c!.Department)
                 .Include(u => u.Classes)
-                    .ThenInclude(d => d.Teacher)
+                    .ThenInclude(c => c.Teacher)
                 .FirstOrDefaultAsync();
 
         public IQueryable<Student> FindAll(Expression<Func<Student, bool>>? predicate = null)

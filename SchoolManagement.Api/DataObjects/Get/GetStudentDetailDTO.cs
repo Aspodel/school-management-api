@@ -17,6 +17,6 @@ namespace SchoolManagement.Api.DataObjects.Get
         public string? PhoneNumber { get; set; }
         public string? Address { get; set; }
 
-        public ICollection<ClassDTO> Classes { get; set; } = Array.Empty<ClassDTO>();
+        public ICollection<GetClassDTO> Classes { get; set; } = Array.Empty<GetClassDTO>();
     }
 }
