@@ -111,37 +111,38 @@ namespace SchoolManagement.Api.Controllers
 
             _mapper.Map(dto, teacher);
 
-            ICollection<Class> classes = teacher.Classes;
-            ICollection<int> requestClasses = dto.Classes;
-            ICollection<int> originalClasses = teacher.Classes.Select(c => c.Id).ToList();
+            //ICollection<Class> classes = teacher.Classes;
+            //ICollection<int> requestClasses = dto.Classes;
+            //ICollection<int> originalClasses = teacher.Classes.Select(c => c.Id).ToList();
 
-            // Delete Classes
-            ICollection<int> deleteClasses = originalClasses.Except(requestClasses).ToList();
-            if (deleteClasses.Count > 0)
-            {
-                foreach (var itemClass in deleteClasses)
-                {
-                    var item = classes.First(c => c.Id == itemClass);
-                    classes.Remove(item);
-                }
-            }
+            //// Delete Classes
+            //ICollection<int> deleteClasses = originalClasses.Except(requestClasses).ToList();
+            //if (deleteClasses.Count > 0)
+            //{
+            //    foreach (var itemClass in deleteClasses)
+            //    {
+            //        var item = classes.First(c => c.Id == itemClass);
+            //        classes.Remove(item);
+            //    }
+            //}
 
-            // Add Classes
-            ICollection<int> newClasses = requestClasses.Except(originalClasses).ToList();
-            if (newClasses.Count > 0)
-            {
-                foreach (var itemClass in deleteClasses)
-                {
-                    var item = await _classRepository.FindByIdAsync(itemClass);
-                    if (item is null)
-                        return BadRequest("ClassId is not valid");
+            //// Add Classes
+            //ICollection<int> newClasses = requestClasses.Except(originalClasses).ToList();
+            //if (newClasses.Count > 0)
+            //{
+            //    foreach (var itemClass in deleteClasses)
+            //    {
+            //        var item = await _classRepository.FindByIdAsync(itemClass);
+            //        if (item is null)
+            //            return BadRequest("ClassId is not valid");
 
-                    classes.Add(item);
-                }
-            }
+            //        classes.Add(item);
+            //    }
+            //}
 
-            teacher.Classes = classes;
+            //teacher.Classes = classes;
 
+            //await _classRepository.SaveChangesAsync();
             await _teacherManager.UpdateAsync(teacher);
 
             return NoContent();

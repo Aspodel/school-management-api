@@ -94,11 +94,23 @@ namespace SchoolManagement.Api.Controllers
         [HttpPut("{classCode}")]
         public async Task<IActionResult> Update([FromBody] ClassDTO dto, CancellationToken cancellationToken = default)
         {
-            var course = await _classRepository.FindByClassCode(dto.ClassCode, cancellationToken);
-            if (course is null)
+            var @class = await _classRepository.FindByClassCode(dto.ClassCode, cancellationToken);
+            if (@class is null)
                 return NotFound();
 
-            _mapper.Map(dto, course);
+            var course = await _courseRepository.FindByIdAsync(dto.CourseId, cancellationToken);
+            if (course is null)
+                return BadRequest(new { message = "Course is not found" });
+
+            var teacher = await _teacherManager.FindByIdCardAsync(dto.TeacherId!);
+            if (teacher is null)
+                return BadRequest(new { message = "Teacher is not found" });
+
+            _mapper.Map(dto, @class);
+
+            @class.Course = course;
+            @class.Teacher = teacher;
+
             await _classRepository.SaveChangesAsync(cancellationToken);
 
             return NoContent();

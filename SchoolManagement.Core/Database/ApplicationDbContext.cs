@@ -58,6 +58,7 @@ namespace SchoolManagement.Core.Database
                     .WithMany(c => c!.Classes)
                     .HasForeignKey(t => t!.TeacherId)
                     .OnDelete(DeleteBehavior.Restrict);
+                    
 
                 entity.Property(e => e.Day)
                     .HasConversion(
